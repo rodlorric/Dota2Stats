@@ -20,6 +20,7 @@
         </tr>
     </table>
 </form>
+<a href='/stats/items'>Items</a> <a href='/stats/abilities'>Abilities</a> <a href='/stats/countries'>Countries</a> <a href='/stats/heroes'>Heroes</a>
 {% if players_list %}
     {% for player in players_list %}
         <li><a href="{% url 'player:matchesxplayer' player.account_id %}">{{ player.personaname }}</a></li>

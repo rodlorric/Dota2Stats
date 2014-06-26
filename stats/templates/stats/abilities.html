@@ -4,12 +4,12 @@
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <table>
   <tr>
-    <th>Ability</th>
     <th></th>
   </tr>
   {% for ability in abilities_list %}
 	<tr>   	
-    	<td>{{ability.name}}
+    	<td><img style="border:thin solid black;" alt="{{ability.name}}" src="{{ability.ability_img_uri}}" title="{{ability.name}}"/></td>
+  	</tr>
   	</tr>
 {% endfor %}
 </table>

@@ -1,0 +1,16 @@
+<title>Dota 2 Stats :: Heroes</title>
+<h1>Heroes</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<table>
+  <tr>
+    <th>Hero</th>
+    <th></th>
+  </tr>
+  {% for hero in heroes_list %}
+	<tr>   	
+    	<td><a href="{{hero.hero_url}}"><img style="border:thin solid black;" alt="{{hero.localized_name}}" src="{{hero.small_horizontal_portrait_uri}}" title="{{hero.localized_name}}"/></a>
+    	<td><a href="{{hero.hero_url}}">{{hero.localized_name}}</a></td>
+  	</tr>
+{% endfor %}
+</table>

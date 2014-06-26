@@ -1,0 +1,19 @@
+{
+	"folders":
+	[
+		{
+			"path": "/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats"
+		},
+		{
+			"path": "lib/python2.7"
+		}
+	],
+	 "build_systems":
+	[
+		{
+		"name": "Run Server",
+		"working_dir": "${project_path}",
+		"cmd": ["python", "manage.py", "runserver"]
+		}
+	]
+}

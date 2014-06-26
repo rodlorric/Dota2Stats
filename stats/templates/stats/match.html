@@ -1,0 +1,210 @@
+{% load staticfiles %}
+<title>Dota 2 Stats :: Match {{match.match_id}}</title>
+<link rel="stylesheet" type="text/css" href="{% static 'stats/style.css' %}" />
+<script type="text/javascript" src="{% static 'stats/jquery-latest.js' %}"></script> 
+<script type="text/javascript" src="{% static 'stats/jquery.tablesorter.js' %}"></script> 
+<script type="text/javascript">
+	$(document).ready(function() 
+	    { 
+	        $("#match").tablesorter(); 
+	    } 
+	); 
+</script>
+<!--Load the AJAX API-->
+<script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
+<script type="text/javascript">
+    google.load('visualization', '1', {packages: ['corechart']});
+</script>
+<script type="text/javascript">
+	function drawVisualization() {
+    // Create and populate the data table.
+    var data_from_db = {{timeline_xp|safe}}
+    var data = google.visualization.arrayToDataTable(data_from_db);
+      	
+    // Create and draw the visualization.
+    new google.visualization.LineChart(document.getElementById('xp_visualization')).
+    	draw(data, {colors: ['green'],
+            		title: 'XP',
+        			chartArea :{left:120,top:50,width:'75%',height:'50%'},
+        			curveType: 'function'}
+        );
+      }     
+
+     google.setOnLoadCallback(drawVisualization);
+</script>
+
+<h1>{{ match.match_id }}</h1>
+<a href="http://dotabuff.com/matches/{{match.match_id}}">Match on Dotabuff</a>
+<table>
+		<tr>
+          	<th>Date</th>
+          	<th>Lobby</th>
+          	<th>Game Mode</th>
+          	<th>Winner</th>
+          	<th>Duration</th>
+          	<th>Location</th>
+        </tr>
+        <tr>
+          	<td class="centerText">
+          		{{match.start_time}}
+          	</td>
+          	<td class="centerText">
+            	{{match.lobby_type}}
+          	</td>
+          	<td class="centerText">
+            	{{match.game_mode}}
+          	</td>
+          	<td class="centerText">
+          	{% if match.radiant_win == True %}
+            	Radiant
+            {% else %}
+            	Dire
+            {% endif %}
+          	</td>
+          	<td class="centerText">
+            	{{match.duration|time:'H:i:s' }}
+          	</td>
+          	<td class="centerText">
+          		{{match.cluster}}
+          	</td>
+        </tr>
+</table>
+
+        {% if players_list %}
+		    <ul>
+		    <table id="match" class="tablesorter">
+		    <thead>
+		    <tr>
+	          	<th>Player</th>
+	          	<th>Hero</th>
+	          	<th>Level</th>
+	          	<th>Kills</th>
+	          	<th>Deaths</th>
+	          	<th>Assists</th>
+	          	<th>Last Hits</th>
+	          	<th>Denies</th>
+	          	<th>GPM</th>
+	          	<th>XPM</th>
+	          	<th>Hero Damage</th>
+	          	<th>Hero Healing</th>
+	          	<th>Tower Damage</th>
+	          	<th>Items</th>
+	          	<th></th>
+	          	<th></th>
+	          	<th></th>
+	          	<th></th>
+	          	<th></th>
+	          	<th>1</th>
+	          	<th>2</th>
+	          	<th>3</th>
+	          	<th>4</th>
+	          	<th>5</th>
+	          	<th>6</th>
+	          	<th>7</th>
+	          	<th>8</th>
+	          	<th>9</th>
+	          	<th>10</th>
+	          	<th>11</th>
+	          	<th>12</th>
+	          	<th>13</th>
+	          	<th>14</th>
+	          	<th>15</th>
+	          	<th>16</th>
+	          	<th>17</th>
+	          	<th>18</th>
+	          	<th>19</th>
+	          	<th>20</th>
+	          	<th>21</th>
+	          	<th>22</th>
+	          	<th>23</th>
+	          	<th>24</th>
+	          	<th>25</th>	          	
+        	</tr>
+        	</thead>
+        	<tbody>
+		    {% for player in players_list %}
+		    	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
+			    	<td class="leftText">
+			    		{% if player.avatar%}
+			    			<img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/>
+			    		{% else %}
+			    			<img style="border:thin solid black;" alt="{{player.personaname}}" src="{{anon_img}}" title="{{player.personaname}}"/>
+			    		{% endif %}
+		          		{{player.personaname}} 
+		          		{% if player.country and player.flag %}
+		          			<img style="border:thin solid black;" alt="{{player.country}}" src="{{player.flag}}" title="{{player.country}}"/>
+		          		{% endif %}
+		          	</td>
+		          	<td class="centerText">
+		            	<img style="border:thin solid black;" alt="{{player.hero_localized_name}}" src="{{player.hero_img}}" title="{{player.hero_localized_name}}"/>
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.level}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.kills}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.deaths}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.assists}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.last_hits}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.denies}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.gold_per_min}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.xp_per_min}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.hero_damage}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.hero_healing}}
+		          	</td>
+		          	<td class="centerText">
+		            	{{player.tower_damage}}
+		          	</td>
+		          	<td class="centerText">
+		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_0_img_uri}}"/>
+		          	</td>
+		          	<td class="centerText">
+		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_1_img_uri}}"/>
+		          	</td>
+		          	<td class="centerText">
+		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_2_img_uri}}"/>
+		          	</td>
+		          	<td class="centerText">
+		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_3_img_uri}}"/>
+		          	</td>
+		          	<td class="centerText">
+		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_4_img_uri}}"/>
+		          	</td>
+		          	<td class="centerText">
+		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_5_img_uri}}"/>
+		          	</td>
+			          {% for a in player.abilities %}
+			          	<td class="centerText">
+			    			<img style="border:thin solid black; width: 20px; height: 20px" alt="{{a.name}}" src="{{a.img}}" title="{{a.name}}"/>
+			    		</td>
+			    	{% endfor %}		        
+				</tr>
+		    {% endfor %}
+		    </tbody>
+		    </ul>
+		</table>
+		{% else %}
+		    <p>Match not found!</p>
+		{% endif %}
+<img src="{{gmap_img}}">
+<p>
+<div id="xp_visualization" style="width:1024; height:1024px"/>
+
+
+

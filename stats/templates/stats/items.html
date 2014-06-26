@@ -1,0 +1,15 @@
+<title>Dota 2 Stats :: Items</title>
+<h1>Items</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<table>
+  <tr>
+    <th>Item</th>
+    <th></th>
+  </tr>
+  {% for item in items_list %}
+	<tr>   	
+    	<td>{{item.name}}
+  	</tr>
+{% endfor %}
+</table>

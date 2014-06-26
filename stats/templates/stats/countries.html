@@ -1,0 +1,17 @@
+<title>Dota 2 Stats :: Countries</title>
+<h1>Countries</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<table>
+  <tr>
+    <th>Country</th>
+    <th></th>
+  </tr>
+  {% for country in countries_list %}
+	<tr>
+		<td><img alt="{{country.countryName}}" src="{{country.flag_uri}}" title="{{country.countryName}}"/></td>   	
+    	<td>{{country.countryCode}}</td>
+    	<td>{{country.countryName}}</td>
+  	</tr>
+{% endfor %}
+</table>

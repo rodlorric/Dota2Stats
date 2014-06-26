@@ -1,0 +1,15 @@
+<title>Dota 2 Stats :: Abilities</title>
+<h1>Abilities</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<table>
+  <tr>
+    <th>Ability</th>
+    <th></th>
+  </tr>
+  {% for ability in abilities_list %}
+	<tr>   	
+    	<td>{{ability.name}}
+  	</tr>
+{% endfor %}
+</table>

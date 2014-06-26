@@ -1,0 +1,43 @@
+li a {
+    color: green;
+}
+
+tr.matchesxplayerrow{
+  background-color: hsl(0,0%,90%);
+}
+
+tr.matchesxplayerrow:hover{
+  background-color: hsl(0,0%,40%);
+  cursor: pointer;
+}
+
+tr.matchesxplayerrowdire{
+  background-color: hsl(11, 78%, 47%);
+}
+
+tr.matchesxplayerrowdire:hover{
+  background-color: hsl(12, 100%, 53%);
+  cursor: pointer;
+}
+
+tr.matchesxplayerrowradiant{
+  background-color: hsl(80, 61%, 50%);
+}
+
+tr.matchesxplayerrowradiant:hover{
+  background-color: hsl(80, 84%, 58%);
+  cursor: pointer;
+}
+
+table.nogap{
+  border-collapse: collapse;
+}
+
+td.centerText{
+   text-align: center;
+}
+
+td, th {
+  white-space: nowrap;
+  overflow: hidden;
+}

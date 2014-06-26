@@ -1,0 +1,471 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"Ano",
+				"Anonymous"
+			],
+			[
+				"get",
+				"getSteamID64bit"
+			],
+			[
+				"pla",
+				"player_info_list"
+			],
+			[
+				"ac",
+				"account_id"
+			],
+			[
+				"acc",
+				"account_id"
+			],
+			[
+				"mo",
+				"modules"
+			],
+			[
+				"Pla",
+				"PlayerInfo"
+			],
+			[
+				"print",
+				"player_info_list"
+			],
+			[
+				"up",
+				"updatePlayerInfo"
+			],
+			[
+				"s",
+				"steamid"
+			],
+			[
+				"pi",
+				"pi_list"
+			],
+			[
+				"pl",
+				"player_info_list"
+			],
+			[
+				"res",
+				"resolveSteamId"
+			],
+			[
+				"ability_im",
+				"ability_img_uri"
+			],
+			[
+				"abilit",
+				"ability"
+			],
+			[
+				"abili",
+				"abilities"
+			],
+			[
+				"img_ur",
+				"img_uri"
+			],
+			[
+				"im",
+				"img_url"
+			],
+			[
+				"templa",
+				"template_name"
+			],
+			[
+				"mat",
+				"match_id"
+			],
+			[
+				"match",
+				"matchesxplayer"
+			],
+			[
+				"smo",
+				"small_horizontal_portrait_uri"
+			],
+			[
+				"sm",
+				"small_horizontal_portrait_uri"
+			],
+			[
+				"max",
+				"matchxplayer"
+			],
+			[
+				"full",
+				"full_quality_vertical_portrait"
+			],
+			[
+				"fu",
+				"full_quality_horizontal_portrait"
+			],
+			[
+				"tmp",
+				"tmpdir"
+			],
+			[
+				"fla",
+				"flag_url"
+			],
+			[
+				"char",
+				"CharField"
+			],
+			[
+				"pr",
+				"print"
+			],
+			[
+				"loca",
+				"localized_name"
+			],
+			[
+				"to",
+				"total_time"
+			],
+			[
+				"typ",
+				"type_list"
+			],
+			[
+				"lobby",
+				"lobby_type"
+			],
+			[
+				"cl",
+				"cluster"
+			],
+			[
+				"in",
+				"IntegerField"
+			],
+			[
+				"tr",
+				"True"
+			],
+			[
+				"M",
+				"Model	Model"
+			],
+			[
+				"a",
+				"ability"
+			],
+			[
+				"player",
+				"playermatches"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "webbroser.open('www.dotabuff.com')",
+			"settings":
+			{
+				"buffer_size": 34,
+				"line_ending": "Windows",
+				"name": "webbroser.open('www.dotabuff.com')"
+			}
+		}
+	],
+	"build_system": "Run Server",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"django",
+				"Set Syntax: Python Django"
+			],
+			[
+				"djan",
+				"Set Syntax: Python Django"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"set syntax p",
+				"Set Syntax: Python"
+			],
+			[
+				"consol",
+				"Set Syntax: R Console"
+			],
+			[
+				"Pack",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 400.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/templates/stats/abilities.html",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/admin.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/urls.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/abilities_json.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/templates/stats/heroesxplayer.html",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/Dota2Stats/settings.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/templates/stats/match.html",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/templates/stats/heroes.html",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/modules.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/models.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/templates/stats/countries.html",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/tasks.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/views.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Documents/memofibo.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/static/stats/style.css",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/dota2stats.sublime-project",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/clusters.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/types.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/items.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/abilities.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/heroes.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/lobbies.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/AppData/Roaming/Sublime Text 2/Packages/User/Python Django.sublime-settings",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/AppData/Roaming/Sublime Text 2/Packages/Djaneiro/Settings/Python (Django).sublime-settings",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/abilities.json",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/static/stats/abilities.py",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/Dropbox/Dota2Stats/stats/dota2stats",
+		"/C/Users/ricardo.rodriguez.SOLUCIONESVLI/AppData/Roaming/Sublime Text 2/Packages/User/django.sublime-build",
+		"/C/Python27/lib/site-packages/django/views/generic/dates.py",
+		"/C/Python27/lib/site-packages/django/db/models/__init__.py",
+		"/C/Python27/lib/site-packages/django/db/models/query.py",
+		"/C/Python27/lib/site-packages/django/db/models/deletion.py",
+		"/C/Python27/lib/site-packages/django/db/models/sql/__init__.py",
+		"/C/Python27/lib/site-packages/django/db/models/sql/subqueries.py",
+		"/C/Python27/lib/site-packages/django/db/models/sql/query.py",
+		"/C/Python27/lib/site-packages/django/db/models/sql/aggregates.py",
+		"/C/Python27/lib/site-packages/django/db/models/fields/__init__.py",
+		"/C/Python27/lib/site-packages/django/conf/__init__.py"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"reverse",
+			"delay",
+			"prin",
+			"leaver_status",
+			".steamid",
+			"for ",
+			"[",
+			"getPlayerSummaries",
+			"acc_",
+			"update",
+			"print",
+			"to avoi",
+			"print",
+			"updatePlayerInfo",
+			"updatePlayer",
+			"updatePlayerInfo",
+			"updatePlayerIn",
+			"updatePlayer",
+			"resolveVanityURL",
+			"updatePlayerInfo",
+			"clusters",
+			"ability",
+			"abilities",
+			"flag",
+			"INVALID_ACCOUNT_IDS",
+			"4294967295",
+			"))\n",
+			"match_details",
+			"            p.hero_id = h['localized_name']\np.hero_localized_name = h['localized_name']",
+			"heroes.IMG_URL",
+			"small_horizontal_portrait",
+			"country",
+			"background",
+			"Hero.obj",
+			"hero =",
+			"matchxplayer",
+			"next",
+			"hero_db",
+			"portrait",
+			"save",
+			"Hero",
+			"total",
+			"Hero.",
+			"Hero",
+			"cLUSTERs",
+			"next",
+			"CLUSTER",
+			"ability",
+			"abilii",
+			"%s",
+			"lam",
+			"settings",
+			"ability",
+			"Player.objects.filter",
+			"Player.object"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"settings":
+					{
+						"buffer_size": 34,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								32,
+								32
+							]
+						],
+						"settings":
+						{
+							"auto_name": "webbroser.open('www.dotabuff.com')",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 221.0
+	},
+	"replace":
+	{
+		"height": 0.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"admin",
+				"Dota2Stats/stats/admin.py"
+			],
+			[
+				"urls",
+				"Dota2Stats/stats/urls.py"
+			],
+			[
+				"heroes",
+				"Dota2Stats/stats/templates/stats/heroes.html"
+			],
+			[
+				"views",
+				"Dota2Stats/stats/views.py"
+			],
+			[
+				"cou",
+				"Dota2Stats/stats/templates/stats/countries.html"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 176.0,
+	"status_bar_visible": true
+}

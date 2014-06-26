@@ -1,0 +1,156 @@
+from django.db import models
+
+class Match(models.Model):
+    match_id = models.BigIntegerField()
+    match_seq_num = models.BigIntegerField()
+    start_time = models.DateTimeField('start time')
+    lobby_type = models.IntegerField() 
+    radiant_win = models.BooleanField()
+    duration = models.TimeField()
+    tower_status_radiant = models.IntegerField()
+    tower_status_dire = models.IntegerField()
+    barracks_status_radiant = models.IntegerField()
+    barracks_status_dire = models.IntegerField()
+    cluster = models.SmallIntegerField()
+    first_blood_time = models.IntegerField()
+    human_players = models.SmallIntegerField()
+    leagueid = models.IntegerField()
+    positive_votes = models.IntegerField()
+    negative_votes = models.IntegerField()
+    game_mode = models.IntegerField()
+    radiant_guild_id = models.IntegerField(null = True)
+    radiant_guild_name = models.CharField(max_length = 100, null = True)
+    radiant_guild_logo = models.BigIntegerField(null = True)
+    radiant_captain = models.BigIntegerField(null = True)
+    dire_guild_id = models.IntegerField(null = True)
+    dire_guild_name = models.CharField(max_length = 100, null = True)
+    dire_guild_logo = models.BigIntegerField(null = True)
+    dire_captain = models.BigIntegerField(null = True)
+
+    def __unicode__(self):
+        return str(self.match_id)
+    
+
+class AbilityUpgrade(models.Model):
+    match_id = models.BigIntegerField(null = True)
+    player_slot = models.SmallIntegerField(null = True)
+    ability = models.SmallIntegerField(null = True)
+    time = models.TimeField(null = True)
+    level = models.SmallIntegerField(null = True)
+    def __unicode__(self):
+        return 'match_id ' +str(self.match_id) + ' player_slot ' + str(self.player_slot) + ' ability ' + str(self.ability) + ' time ' + str(self.time)
+
+class Player(models.Model):
+    match_id = models.BigIntegerField()
+    account_id = models.BigIntegerField()
+    player_slot = models.SmallIntegerField()
+    hero_id = models.SmallIntegerField()
+    item_0 = models.IntegerField(default = None)
+    item_1 = models.IntegerField(default = None)
+    item_2 = models.IntegerField(default = None)
+    item_3 = models.IntegerField(default = None)
+    item_4 = models.IntegerField(default = None)
+    item_5 = models.IntegerField(default = None)
+    kills = models.IntegerField()
+    deaths = models.IntegerField()
+    assists = models.IntegerField()
+    leaver_status = models.SmallIntegerField(null = True)
+    gold = models.IntegerField()
+    last_hits = models.IntegerField()
+    denies = models.IntegerField()
+    gold_per_min = models.IntegerField()
+    xp_per_min = models.IntegerField()
+    gold_spent = models.IntegerField()
+    hero_damage = models.IntegerField()
+    tower_damage = models.IntegerField()
+    hero_healing = models.IntegerField()
+    level = models.IntegerField()
+    def __unicode__(self):
+        return str(self.account_id)
+    
+class PlayerInfo(models.Model):
+    steamid = models.BigIntegerField()
+    communityvisibilitystate = models.SmallIntegerField()
+    profilestate = models.SmallIntegerField(null = True)
+    personaname = models.CharField(max_length = 100, null = True)
+    lastlogoff = models.DateTimeField('lastlogoff', null = True)
+    commentpermission = models.SmallIntegerField(null = True)
+    profileurl = models.URLField(null = True)
+    avatar = models.URLField(null = True)
+    avatarmedium = models.URLField(null = True)
+    avatarfull = models.URLField(null = True)
+    personastate = models.SmallIntegerField(null = True)
+    realname = models.CharField(max_length = 100, null = True)
+    primaryclanid = models.BigIntegerField(null = True)
+    timecreated = models.DateTimeField(null = True)
+    personastateflags = models.SmallIntegerField(null = True)
+    gameserverip = models.IPAddressField(null = True)
+    gameserversteamid = models.BigIntegerField(null = True)
+    gameextrainfo = models.CharField(max_length = 100, null = True)
+    gameid = models.IntegerField(null = True)
+    lobbysteamid = models.BigIntegerField(null = True)
+    loccountrycode = models.CharField(max_length = 100, null = True)
+    locstatecode = models.CharField(max_length = 20, null = True)
+    loccityid = models.IntegerField(max_length = 20, null = True)
+    def __unicode__(self):
+        return str(self.steamid)
+    
+class Hero(models.Model):
+    name = models.CharField(max_length = 200)
+    hero_id = models.SmallIntegerField()
+    localized_name = models.CharField(max_length = 200)
+    small_horizontal_portrait = models.URLField()
+    small_horizontal_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
+    large_horizontal_portrait = models.URLField()
+    large_horizontal_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
+    full_quality_horizontal_portrait = models.URLField()
+    full_quality_horizontal_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
+    full_quality_vertical_portrait = models.URLField()
+    full_quality_vertical_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
+    hero_url = models.URLField()
+    def __unicode__(self):
+        return self.name
+
+class Ability(models.Model):
+    name = models.CharField(max_length = 200)
+    ability_id = models.IntegerField()
+    ability_img_url = models.URLField()
+    ability_img_uri = models.CharField(max_length=10000, blank=True, null=True)
+    def __unicode__(self):
+        return self.name
+
+
+class Country(models.Model):
+    countryCode = models.CharField(max_length = 2, blank = True, null = True)
+    countryName = models.CharField(max_length = 100, blank = True, null = True)
+    flag_url = models.URLField(blank = True, null = True)
+    flag_uri = models.CharField(max_length = 1000, blank=True, null=True)
+    isoNumeric = models.CharField(max_length = 3, blank = True, null = True)
+    isoAlpha3 = models.CharField(max_length = 3, blank = True, null = True)
+    fipsCode = models.CharField(max_length = 2, blank = True, null = True)
+    continent = models.CharField(max_length = 2, blank = True, null = True)
+    continentName = models.CharField(max_length = 25, blank = True, null = True)
+    capital = models.CharField(max_length = 100, blank = True, null = True)
+    areaInSqKm = models.FloatField(blank = True, null = True)
+    population = models.BigIntegerField(blank = True, null = True)
+    currencyCode = models.CharField(max_length = 3, blank = True, null = True)
+    languages = models.CharField(max_length = 20, blank = True, null = True)
+    geonameId = models.IntegerField(blank = True, null = True)
+    west = models.FloatField(blank = True, null = True)
+    north = models.FloatField(blank = True, null = True)
+    east = models.FloatField(blank = True, null = True)
+    south = models.FloatField(blank = True, null = True)
+    latitude = models.FloatField(blank = True, null = True)
+    longitude = models.FloatField(blank = True, null = True)
+    def __unicode__(self):
+        return self.countryName + ' - ' + self.countryCode
+
+class Item(models.Model):
+    item_id = models.SmallIntegerField()
+    name = models.CharField(max_length=100)
+    cost = models.SmallIntegerField(blank = True, null = True)
+    secret_shop = models.SmallIntegerField(blank = True, null = True)
+    side_shop = models.SmallIntegerField(blank = True, null = True)
+    recipe = models.SmallIntegerField(blank = True, null = True)
+    item_img_url = models.URLField(blank = True, null = True)
+    item_img_uri = models.CharField(max_length=10000, blank=True, null=True)

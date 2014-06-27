@@ -89,36 +89,7 @@
 	          	<th>Hero Healing</th>
 	          	<th>Tower Damage</th>
 	          	<th>Items</th>
-	          	<th></th>
-	          	<th></th>
-	          	<th></th>
-	          	<th></th>
-	          	<th></th>
-	          	<th>1</th>
-	          	<th>2</th>
-	          	<th>3</th>
-	          	<th>4</th>
-	          	<th>5</th>
-	          	<th>6</th>
-	          	<th>7</th>
-	          	<th>8</th>
-	          	<th>9</th>
-	          	<th>10</th>
-	          	<th>11</th>
-	          	<th>12</th>
-	          	<th>13</th>
-	          	<th>14</th>
-	          	<th>15</th>
-	          	<th>16</th>
-	          	<th>17</th>
-	          	<th>18</th>
-	          	<th>19</th>
-	          	<th>20</th>
-	          	<th>21</th>
-	          	<th>22</th>
-	          	<th>23</th>
-	          	<th>24</th>
-	          	<th>25</th>	          	
+	          	<th>Abilities</th>    	
         	</tr>
         	</thead>
         	<tbody>
@@ -171,29 +142,19 @@
 		          	<td class="centerText">
 		            	{{player.tower_damage}}
 		          	</td>
-		          	<td class="centerText">
-		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_0_img_uri}}"/>
+		          	<td>
+		          		{% if player.item_0 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_0_img_uri}}"/>{% endif %}
+		            	{% if player.item_1 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_1_img_uri}}"/>{% endif %}
+		            	{% if player.item_2 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_2_img_uri}}"/>{% endif %}
+		            	{% if player.item_3 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_3_img_uri}}"/>{% endif %}
+		            	{% if player.item_4 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_4_img_uri}}"/>{% endif %}
+		            	{% if player.item_5 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_5_img_uri}}"/>{% endif %}
 		          	</td>
-		          	<td class="centerText">
-		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_1_img_uri}}"/>
-		          	</td>
-		          	<td class="centerText">
-		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_2_img_uri}}"/>
-		          	</td>
-		          	<td class="centerText">
-		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_3_img_uri}}"/>
-		          	</td>
-		          	<td class="centerText">
-		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_4_img_uri}}"/>
-		          	</td>
-		          	<td class="centerText">
-		            	<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_5_img_uri}}"/>
-		          	</td>
-			          {% for a in player.abilities %}
-			          	<td class="centerText">
-			    			<img style="border:thin solid black; width: 20px; height: 20px" alt="{{a.name}}" src="{{a.img}}" title="{{a.name}}"/>
-			    		</td>
-			    	{% endfor %}		        
+		          	<td>
+			        	{% for a in player.abilities %}			          	
+				    		<img style="border:thin solid black; width: 20px; height: 20px" alt="{{a.name}}" src="{{a.img}}" title="{{a.name}}"/>
+				    	{% endfor %}		        
+			       	</td>
 				</tr>
 		    {% endfor %}
 		    </tbody>

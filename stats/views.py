@@ -15,6 +15,7 @@ import time
 import heroes_json
 import abilities_json
 import urllib
+import steam_countries_json
 from django.contrib.auth.decorators import login_required
 from django.template import RequestContext
 from django.contrib.auth import logout as auth_logout
@@ -248,7 +249,18 @@ class MatchDetail(generic.ListView):
                     c = Country.objects.get(countryCode = pi.loccountrycode)
                     p.country = c.countryName
                     p.flag = c.flag_uri
-                    coordinates.append({'lat' :c.latitude , 'lon' : c.longitude})
+
+                    country = steam_countries_json.countries.get(pi.loccountrycode)
+                    if country:
+                        state = country['states'].get(pi.locstatecode)
+                        if state:
+                            city = state['cities'].get(str(pi.loccityid))
+                            if city:
+                                coordinates.append(city['coordinates'])
+                            else:
+                                coordinates.append(state['coordinates'])
+                        else:
+                            coordinates.append(country['coordinates'])
                 except Country.DoesNotExist:
                     p.country = None
                     p.flag = None

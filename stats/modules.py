@@ -167,10 +167,17 @@ def saveMatch(match_id):
     #updating player infos    
     updatePlayerInfo(pi_list)   
     return match
-
+"""
 def gmap_img(points):
     markers = '&'.join('markers=%s,%s' % (p['lat'], p['lon']) 
                        for p in points)
+    return settings.GMAPS_URL + markers
+"""
+def gmap_img(points):
+    print(points)
+    markers = '&'.join('markers=%s' % p 
+                       for p in points)
+    print(settings.GMAPS_URL + markers)
     return settings.GMAPS_URL + markers
 
 

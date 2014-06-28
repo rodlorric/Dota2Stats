@@ -174,10 +174,8 @@ def gmap_img(points):
     return settings.GMAPS_URL + markers
 """
 def gmap_img(points):
-    print(points)
     markers = '&'.join('markers=%s' % p 
                        for p in points)
-    print(settings.GMAPS_URL + markers)
     return settings.GMAPS_URL + markers
 
 

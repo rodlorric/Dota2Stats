@@ -26,6 +26,8 @@ SECRET_KEY = 'tg&6pje(u1e%i4ekc!wt#05fi27sgydwsow2fcj3rfjjdzn_qj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+HTML_MINIFY = True
+
 TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
@@ -48,6 +50,7 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.gzip.GZipMiddleware',
     'htmlmin.middleware.HtmlMinifyMiddleware',
+    'htmlmin.middleware.MarkRequestMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

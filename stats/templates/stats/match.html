@@ -10,28 +10,6 @@
 	    } 
 	); 
 </script>
-<!--Load the AJAX API-->
-<script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
-<script type="text/javascript">
-    google.load('visualization', '1', {packages: ['corechart']});
-</script>
-<script type="text/javascript">
-	function drawVisualization() {
-    // Create and populate the data table.
-    var data_from_db = {{timeline_xp|safe}}
-    var data = google.visualization.arrayToDataTable(data_from_db);
-      	
-    // Create and draw the visualization.
-    new google.visualization.LineChart(document.getElementById('xp_visualization')).
-    	draw(data, {colors: ['green'],
-            		title: 'XP',
-        			chartArea :{left:120,top:50,width:'75%',height:'50%'},
-        			curveType: 'function'}
-        );
-      }     
-
-     google.setOnLoadCallback(drawVisualization);
-</script>
 
 <h1>{{ match.match_id }}</h1>
 <a href="http://dotabuff.com/matches/{{match.match_id}}">Match on Dotabuff</a>
@@ -165,7 +143,29 @@
 		{% endif %}
 <img src="{{gmap_img}}">
 <p>
-<div id="xp_visualization" style="width:1024; height:1024px"/>
 
+<div id="xp_visualization" style="width:1024; height:1024px"/>
+<!--Load the AJAX API-->
+<script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
+<script type="text/javascript">
+    google.load('visualization', '1', {packages: ['corechart']});
+</script>
+<script type="text/javascript">
+	function drawVisualization() {
+    // Create and populate the data table.
+    var data_from_db = {{timeline_xp|safe}}
+    var data = google.visualization.arrayToDataTable(data_from_db);
+      	
+    // Create and draw the visualization.
+    new google.visualization.LineChart(document.getElementById('xp_visualization')).
+    	draw(data, {colors: ['green'],
+            		title: 'XP',
+        			chartArea :{left:120,top:50,width:'75%',height:'50%'},
+        			curveType: 'function'}
+        );
+      }     
+
+     google.setOnLoadCallback(drawVisualization);
+</script>
 
 

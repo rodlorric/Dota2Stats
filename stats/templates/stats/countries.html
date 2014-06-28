@@ -1,3 +1,5 @@
+{% load staticfiles %}
+  <link rel="stylesheet" type="text/css" href="{% static 'stats/countries_stylesheet.css' %}" />
 <title>Dota 2 Stats :: Countries</title>
 <h1>Countries</h1>
 
@@ -9,7 +11,8 @@
   </tr>
   {% for country in countries_list %}
 	<tr>
-		<td><img alt="{{country.countryName}}" src="{{country.flag_uri}}" title="{{country.countryName}}"/></td>   	
+		<!--<td><img alt="{{country.countryName}}" src="{{country.flag_url}}" title="{{country.countryName}}"/></td>-->
+    <td><i class="country_sprite {{country.countryCode_sprite}}"/></td>   	
     	<td>{{country.countryCode}}</td>
     	<td>{{country.countryName}}</td>
   	</tr>

@@ -200,44 +200,46 @@ class MatchDetail(generic.ListView):
                 p.hero_id = h.hero_id
                 p.hero_img = h.small_horizontal_portrait_uri
                 p.hero_localized_name = h.localized_name
+                p.hero_name = 'sprite-' + h.name.replace('npc_dota_hero_','') + '_sb'
             except Hero.DoesNotExist:
                 h = Hero(name = 'Abandoned', localized_name = 'Abandoned' )
 
             acc_ids.append(p.account_id)
             player_abilities = AbilityUpgrade.objects.filter(Q(match_id = p.match_id), Q(player_slot = p.player_slot)).order_by('time')
             for ab in player_abilities:
-                #ab_name = next((a['name'] for a in ability_names if a['id'] == str(ab.ability)), None)
-                ability = Ability.objects.get(ability_id = ab.ability)
-                ab.name = ability.name
-                ab.img = ability.ability_img_uri
+                try:
+                    ability = Ability.objects.get(ability_id = ab.ability)
+                    ab.name = 'sprite-' + ability.name + '_hp1'
+                except Ability.DoesNotExist:
+                    print('Ability ' + str(ab.ability) + ' does not exist')
                 xp = exp_x_lvl[ab.level] if p.player_slot<128 else -exp_x_lvl[ab.level]
                 timeline_xp.append((ab.time.strftime('%H:%M:%S'), xp))
             p.abilities = player_abilities
             i += 1
             try:
-                p.item_0_img_uri = Item.objects.get(item_id = p.item_0).item_img_uri
+                p.item_0_name = 'sprite-' + Item.objects.get(item_id = p.item_0).name.replace('item_','') + '_lg'
             except Item.DoesNotExist:
-                p.item_0_img_uri = None
+                p.item_0_name = None
             try:
-                p.item_1_img_uri = Item.objects.get(item_id = p.item_1).item_img_uri
+                p.item_1_name = 'sprite-' + Item.objects.get(item_id = p.item_1).name.replace('item_','') + '_lg'
             except Item.DoesNotExist:
-                p.item_1_img_uri = None
+                p.item_1_name = None
             try:
-                p.item_2_img_uri = Item.objects.get(item_id = p.item_2).item_img_uri
+                p.item_2_name = 'sprite-' + Item.objects.get(item_id = p.item_2).name.replace('item_','') + '_lg'
             except Item.DoesNotExist:
-                p.item_2_img_uri = None
+                p.item_2_name = None
             try:
-                p.item_3_img_uri = Item.objects.get(item_id = p.item_3).item_img_uri
+                p.item_3_name = 'sprite-' + Item.objects.get(item_id = p.item_3).name.replace('item_','') + '_lg'
             except Item.DoesNotExist:
-                p.item_3_img_uri = None
+                p.item_3_name = None
             try:
-                p.item_4_img_uri = Item.objects.get(item_id = p.item_4).item_img_uri
+                p.item_4_name = 'sprite-' + Item.objects.get(item_id = p.item_4).name.replace('item_','') + '_lg'
             except Item.DoesNotExist:
-                p.item_4_img_uri = None
+                p.item_4_name = None
             try:
-                p.item_5_img_uri = Item.objects.get(item_id = p.item_5).item_img_uri
+                p.item_5_name = 'sprite-' + Item.objects.get(item_id = p.item_5).name.replace('item_','') + '_lg'
             except Item.DoesNotExist:
-                p.item_5_img_uri = None
+                p.item_5_name = None
         player_info_list = modules.updatePlayerInfo(acc_ids)
         for p in players:
             pi = [pi for pi in player_info_list if str(pi.steamid) == str(modules.getSteamID64bit(p.account_id))]
@@ -248,7 +250,7 @@ class MatchDetail(generic.ListView):
                 try:
                     c = Country.objects.get(countryCode = pi.loccountrycode)
                     p.country = c.countryName
-                    p.flag = c.flag_uri
+                    p.flag = 'sprite-' + c.countryCode.lower()
 
                     country = steam_countries_json.countries.get(pi.loccountrycode)
                     if country:
@@ -292,6 +294,8 @@ class Heroes(generic.ListView):
     def get_queryset(self):
         heroes = Hero.objects.all()
         if heroes:
+            for h in heroes:
+                h.name = 'sprite-' + h.name[14:] + '_sb'
             return heroes
         else:
             heroes = modules.getHeroes()['result']['heroes']
@@ -327,6 +331,8 @@ class Countries(generic.ListView):
     def get_queryset(self):
         countries = Country.objects.all()
         if countries:
+            for c in countries:
+                c.countryCode_sprite = 'sprite-' + c.countryCode.lower()
             return countries
         else:
             countries = modules.getCountries()
@@ -354,6 +360,8 @@ class Abilities(generic.ListView):
     def get_queryset(self ):
         abilities = Ability.objects.all()
         if abilities:
+            for a in abilities:
+                a.sprite_name = 'sprite-' + a.name + '_hp1'
             return abilities
         else:
             abilities = abilities_json.JSON['abilities']
@@ -380,6 +388,9 @@ class Items(generic.ListView):
     def get_queryset(self):
         items = Item.objects.all()
         if items:
+            for i in items:
+                i.sprite_name = 'sprite-' + i.name[5:] + '_lg'
+                i.name = i.name[5:]
             return items
         else:
             items = modules.getItems()

@@ -1,3 +1,5 @@
+{% load staticfiles %}
+	<link rel="stylesheet" type="text/css" href="{% static 'stats/abilities_stylesheet.css' %}" />
 <title>Dota 2 Stats :: Abilities</title>
 <h1>Abilities</h1>
 
@@ -7,8 +9,9 @@
     <th></th>
   </tr>
   {% for ability in abilities_list %}
-	<tr>   	
-    	<td><img style="border:thin solid black;" alt="{{ability.name}}" src="{{ability.ability_img_uri}}" title="{{ability.name}}"/></td>
+	<tr>
+    	<td><i class="ability_sprite {{ability.sprite_name}}"/></i></td>
+    	<td>{{ability.name}}</td>
   	</tr>
   	</tr>
 {% endfor %}

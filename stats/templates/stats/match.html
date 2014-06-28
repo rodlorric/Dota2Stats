@@ -1,6 +1,10 @@
 {% load staticfiles %}
 <title>Dota 2 Stats :: Match {{match.match_id}}</title>
 <link rel="stylesheet" type="text/css" href="{% static 'stats/style.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'stats/heroes_stylesheet.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'stats/abilities_stylesheet.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'stats/items_stylesheet.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'stats/countries_stylesheet.css' %}" />
 <script type="text/javascript" src="{% static 'stats/jquery-latest.js' %}"></script> 
 <script type="text/javascript" src="{% static 'stats/jquery.tablesorter.js' %}"></script> 
 <script type="text/javascript">
@@ -74,18 +78,20 @@
 		    {% for player in players_list %}
 		    	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
 			    	<td class="leftText">
-			    		{% if player.avatar%}
-			    			<img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/>
-			    		{% else %}
-			    			<img style="border:thin solid black;" alt="{{player.personaname}}" src="{{anon_img}}" title="{{player.personaname}}"/>
-			    		{% endif %}
-		          		{{player.personaname}} 
-		          		{% if player.country and player.flag %}
-		          			<img style="border:thin solid black;" alt="{{player.country}}" src="{{player.flag}}" title="{{player.country}}"/>
-		          		{% endif %}
+			    		<ul id="list">
+				    		{% if player.avatar%}
+				    			<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/></li>
+				    		{% else %}
+				    			<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{anon_img}}" title="{{player.personaname}}"/></li>
+				    		{% endif %}
+			          		<li>{{player.personaname}}</li>
+			          		{% if player.country and player.flag %}
+			          			<li><i class="country_sprite {{player.flag}}"></i></li>
+			          		{% endif %}
+		          		</ul>
 		          	</td>
-		          	<td class="centerText">
-		            	<img style="border:thin solid black;" alt="{{player.hero_localized_name}}" src="{{player.hero_img}}" title="{{player.hero_localized_name}}"/>
+		          	<td class="centerText">		    
+		            	<i class="hero_sprite {{player.hero_name}}"></i>
 		          	</td>
 		          	<td class="centerText">
 		            	{{player.level}}
@@ -121,17 +127,23 @@
 		            	{{player.tower_damage}}
 		          	</td>
 		          	<td>
-		          		{% if player.item_0 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_0_img_uri}}"/>{% endif %}
-		            	{% if player.item_1 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_1_img_uri}}"/>{% endif %}
-		            	{% if player.item_2 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_2_img_uri}}"/>{% endif %}
-		            	{% if player.item_3 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_3_img_uri}}"/>{% endif %}
-		            	{% if player.item_4 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_4_img_uri}}"/>{% endif %}
-		            	{% if player.item_5 %}<img style="border:thin solid black; width: 42.5px; height: 33px" src="{{player.item_5_img_uri}}"/>{% endif %}
+		            	<ul id="list">
+			            	{% if player.item_0 %}<li><i class="item_sprite {{player.item_0_name}}"></i></li>{% endif %}
+			            	{% if player.item_1 %}<li><i class="item_sprite {{player.item_1_name}}"></i></li>{% endif %}
+			            	{% if player.item_2 %}<li><i class="item_sprite {{player.item_2_name}}"></i></li>{% endif %}
+			            	{% if player.item_3 %}<li><i class="item_sprite {{player.item_3_name}}"></i></li>{% endif %}
+			            	{% if player.item_4 %}<li><i class="item_sprite {{player.item_4_name}}"></i></li>{% endif %}
+			            	{% if player.item_5 %}<li><i class="item_sprite {{player.item_5_name}}"></i></li>{% endif %}
+			            </ul>
 		          	</td>
 		          	<td>
-			        	{% for a in player.abilities %}			          	
-				    		<img style="border:thin solid black; width: 20px; height: 20px" alt="{{a.name}}" src="{{a.img}}" title="{{a.name}}"/>
-				    	{% endfor %}		        
+		          		<ul id="list">
+				        	{% for a in player.abilities %}
+					    		<li>
+					    			<i class="ability_sprite {{a.name}}"></i>
+					    		<li>
+					    	{% endfor %}		        
+				    	</ul>
 			       	</td>
 				</tr>
 		    {% endfor %}

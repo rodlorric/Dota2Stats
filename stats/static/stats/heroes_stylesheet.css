@@ -1,0 +1,648 @@
+.hero_sprite {
+    background-image: url(/static/stats/heroes_spritesheet.png);
+    background-repeat: no-repeat;
+    display: block;
+    border: 1px solid #ddd;
+}
+
+.sprite-abaddon_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -1px;
+}
+
+.sprite-alchemist_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -1px;
+}
+
+.sprite-ancient_apparition_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -1px;
+}
+
+.sprite-antimage_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -1px;
+}
+
+.sprite-axe_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -1px;
+}
+
+.sprite-bane_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -1px;
+}
+
+.sprite-batrider_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -1px;
+}
+
+.sprite-beastmaster_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -36px;
+}
+
+.sprite-bloodseeker_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -36px;
+}
+
+.sprite-bounty_hunter_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -36px;
+}
+
+.sprite-brewmaster_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -36px;
+}
+
+.sprite-bristleback_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -36px;
+}
+
+.sprite-broodmother_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -36px;
+}
+
+.sprite-centaur_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -36px;
+}
+
+.sprite-chaos_knight_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -71px;
+}
+
+.sprite-chen_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -71px;
+}
+
+.sprite-clinkz_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -71px;
+}
+
+.sprite-crystal_maiden_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -71px;
+}
+
+.sprite-dark_seer_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -71px;
+}
+
+.sprite-dazzle_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -71px;
+}
+
+.sprite-death_prophet_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -71px;
+}
+
+.sprite-disruptor_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -106px;
+}
+
+.sprite-doom_bringer_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -106px;
+}
+
+.sprite-dragon_knight_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -106px;
+}
+
+.sprite-drow_ranger_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -106px;
+}
+
+.sprite-earth_spirit_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -106px;
+}
+
+.sprite-earthshaker_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -106px;
+}
+
+.sprite-elder_titan_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -106px;
+}
+
+.sprite-ember_spirit_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -141px;
+}
+
+.sprite-enchantress_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -141px;
+}
+
+.sprite-enigma_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -141px;
+}
+
+.sprite-faceless_void_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -141px;
+}
+
+.sprite-furion_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -141px;
+}
+
+.sprite-gyrocopter_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -141px;
+}
+
+.sprite-huskar_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -141px;
+}
+
+.sprite-invoker_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -176px;
+}
+
+.sprite-jakiro_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -176px;
+}
+
+.sprite-juggernaut_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -176px;
+}
+
+.sprite-keeper_of_the_light_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -176px;
+}
+
+.sprite-kunkka_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -176px;
+}
+
+.sprite-legion_commander_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -176px;
+}
+
+.sprite-leshrac_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -176px;
+}
+
+.sprite-lich_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -211px;
+}
+
+.sprite-life_stealer_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -211px;
+}
+
+.sprite-lina_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -211px;
+}
+
+.sprite-lion_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -211px;
+}
+
+.sprite-lone_druid_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -211px;
+}
+
+.sprite-luna_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -211px;
+}
+
+.sprite-lycan_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -211px;
+}
+
+.sprite-magnataur_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -246px;
+}
+
+.sprite-medusa_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -246px;
+}
+
+.sprite-meepo_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -246px;
+}
+
+.sprite-mirana_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -246px;
+}
+
+.sprite-morphling_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -246px;
+}
+
+.sprite-naga_siren_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -246px;
+}
+
+.sprite-necrolyte_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -246px;
+}
+
+.sprite-nevermore_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -281px;
+}
+
+.sprite-night_stalker_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -281px;
+}
+
+.sprite-nyx_assassin_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -281px;
+}
+
+.sprite-obsidian_destroyer_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -281px;
+}
+
+.sprite-ogre_magi_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -281px;
+}
+
+.sprite-omniknight_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -281px;
+}
+
+.sprite-phantom_assassin_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -281px;
+}
+
+.sprite-phantom_lancer_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -316px;
+}
+
+.sprite-phoenix_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -316px;
+}
+
+.sprite-puck_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -316px;
+}
+
+.sprite-pudge_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -316px;
+}
+
+.sprite-pugna_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -316px;
+}
+
+.sprite-queenofpain_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -316px;
+}
+
+.sprite-rattletrap_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -316px;
+}
+
+.sprite-razor_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -351px;
+}
+
+.sprite-riki_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -351px;
+}
+
+.sprite-rubick_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -351px;
+}
+
+.sprite-sand_king_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -351px;
+}
+
+.sprite-shadow_demon_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -351px;
+}
+
+.sprite-shadow_shaman_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -351px;
+}
+
+.sprite-shredder_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -351px;
+}
+
+.sprite-silencer_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -386px;
+}
+
+.sprite-skeleton_king_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -386px;
+}
+
+.sprite-skywrath_mage_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -386px;
+}
+
+.sprite-slardar_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -386px;
+}
+
+.sprite-slark_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -386px;
+}
+
+.sprite-sniper_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -386px;
+}
+
+.sprite-spectre_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -386px;
+}
+
+.sprite-spirit_breaker_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -421px;
+}
+
+.sprite-storm_spirit_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -421px;
+}
+
+.sprite-sven_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -421px;
+}
+
+.sprite-templar_assassin_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -184px -421px;
+}
+
+.sprite-terrorblade_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -245px -421px;
+}
+
+.sprite-tidehunter_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -306px -421px;
+}
+
+.sprite-tinker_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -367px -421px;
+}
+
+.sprite-tiny_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -1px;
+}
+
+.sprite-treant_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -36px;
+}
+
+.sprite-troll_warlord_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -71px;
+}
+
+.sprite-tusk_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -106px;
+}
+
+.sprite-undying_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -141px;
+}
+
+.sprite-ursa_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -176px;
+}
+
+.sprite-vengefulspirit_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -211px;
+}
+
+.sprite-venomancer_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -246px;
+}
+
+.sprite-viper_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -281px;
+}
+
+.sprite-visage_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -316px;
+}
+
+.sprite-warlock_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -351px;
+}
+
+.sprite-weaver_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -386px;
+}
+
+.sprite-windrunner_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -428px -421px;
+}
+
+.sprite-wisp_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -1px -456px;
+}
+
+.sprite-witch_doctor_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -62px -456px;
+}
+
+.sprite-zuus_sb {
+    width: 59px;
+    height: 33px;
+    background-position: -123px -456px;
+}

@@ -1,4 +1,5 @@
 from django.http import HttpResponseRedirect
+from django.core.cache import cache
 from django.utils.encoding import smart_str, smart_unicode
 from django.core.urlresolvers import reverse
 from django.views import generic
@@ -292,12 +293,9 @@ class Heroes(generic.ListView):
     context_object_name = 'heroes_list'
     
     def get_queryset(self):
+        start = time.time()
         heroes = Hero.objects.all()
-        if heroes:
-            for h in heroes:
-                h.name = 'sprite-' + h.name[14:] + '_sb'
-            return heroes
-        else:
+        if not heroes:
             heroes = modules.getHeroes()['result']['heroes']
             for h in heroes:
                 name = h['name'][14:]
@@ -322,6 +320,12 @@ class Heroes(generic.ListView):
                           'hero_url' : settings.HERO_URL % (h['localized_name'].replace(' ', '_'))})
                 hero = Hero(**h)
                 hero.save()
+        for h in heroes:
+            h.name = 'sprite-' + h.name[14:] + '_sb'
+            
+        end = time.time()
+        total_time = end - start 
+        print('total time: %s') %str(total_time)
         return heroes
 
 class Countries(generic.ListView):

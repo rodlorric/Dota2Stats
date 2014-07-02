@@ -197,7 +197,11 @@ class MatchDetail(generic.ListView):
                 p.radiant = False
             #h = next((h for h in heroes.JSON['heroes'] if h['id'] == p.hero_id), None)
             try:
-                h = Hero.objects.get(hero_id = p.hero_id)
+                hero_key = 'hero' + str(p.hero_id)
+                h = cache.get(hero_key)
+                if not h:
+                    h = Hero.objects.get(hero_id = p.hero_id)
+                    cache.set(hero_key, h)
                 p.hero_id = h.hero_id
                 p.hero_img = h.small_horizontal_portrait_uri
                 p.hero_localized_name = h.localized_name

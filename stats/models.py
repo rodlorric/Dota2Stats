@@ -21,10 +21,18 @@ class Match(models.Model):
     radiant_guild_id = models.IntegerField(null = True)
     radiant_guild_name = models.CharField(max_length = 100, null = True)
     radiant_guild_logo = models.BigIntegerField(null = True)
+    radiant_team_id = models.IntegerField(null = True)
+    radiant_name = models.CharField(max_length = 100, null = True)
+    radiant_logo = models.IntegerField(null = True)
+    radiant_team_complete = models.SmallIntegerField(null = True)
     radiant_captain = models.BigIntegerField(null = True)
     dire_guild_id = models.IntegerField(null = True)
     dire_guild_name = models.CharField(max_length = 100, null = True)
     dire_guild_logo = models.BigIntegerField(null = True)
+    dire_team_id = models.IntegerField(null = True)
+    dire_logo = models.IntegerField(null = True)
+    dire_team_complete = models.SmallIntegerField(null = True)
+    dire_name = models.CharField(max_length = 100, null = True)
     dire_captain = models.BigIntegerField(null = True)
 
     def __unicode__(self):

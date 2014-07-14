@@ -158,6 +158,10 @@ def saveMatch(match_id):
             player.save()
     match['start_time'] = str(datetime.datetime.fromtimestamp(int(match['start_time'])).strftime('%Y-%m-%d %H:%M:%S'))
     match['duration'] = str(datetime.timedelta(seconds=match['duration']))
+    try:
+        match.pop('picks_bans')
+    except:
+        pass
     match = Match(**match)
     # to avoid duplicates
     try:

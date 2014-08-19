@@ -80,10 +80,24 @@ WSGI_APPLICATION = 'Dota2Stats.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'Dota2',
+        'ENGINE': 'sqlserver_ado',
+        'HOST': '186.95.156.208',
+        'PORT': '1433',
+        'USER': 'pu',
+        'PASSWORD': 'pu123456',
+        'provider': 'SQLOLEDB',
+        'OPTIONS' : {
+            'provider': 'SQLOLEDB'
+        },
     }
 }
 

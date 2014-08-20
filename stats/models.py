@@ -87,7 +87,7 @@ class Matches(models.Model):
         db_table = 'Matches'
 
 class MatchPlayers(models.Model):
-    match = models.ForeignKey('Matches')
+    match = models.ForeignKey('Matches', primary_key=True)
     account = models.ForeignKey(Accounts, blank=True, null=True)
     player_slot = models.SmallIntegerField()
     hero_id = models.SmallIntegerField(blank=True, null=True)
@@ -130,12 +130,12 @@ class AdditionalUnits(models.Model):
         db_table = 'Additional_Units'
 
 class AbilityUpgrades(models.Model):
-    match = models.ForeignKey('MatchPlayers')
+    match = models.ForeignKey('MatchPlayers', primary_key=True)
     player_slot = models.ForeignKey('MatchPlayers', db_column='player_slot', related_name='ability_player_slot')
     ability = models.IntegerField()
     time = models.IntegerField()
     level = models.IntegerField()
-    experiencia = models.IntegerField(blank=True, null=True)
+    experience = models.IntegerField(blank=True, null=True)
     class Meta:
         managed = False
         db_table = 'Ability_Upgrades'

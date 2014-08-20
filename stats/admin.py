@@ -1,5 +1,6 @@
 from django.contrib import admin
-from stats.models import Player, Match, AbilityUpgrade, PlayerInfo, Hero, Country, Ability, Item
+#from stats.models import Player, Match, AbilityUpgrade, PlayerInfo, Hero, Country, Ability, Item
+from stats.models import Heroes, Abilities, Items, Countries
 
 class MatchAdmin(admin.ModelAdmin):
     list_display = ('match_id', 'start_time')
@@ -28,11 +29,11 @@ class PlayerInfoAdmin(admin.ModelAdmin):
     list_filter = ['steamid']
     search_fields = ['steamid']
 
-admin.site.register(Player, PlayerAdmin)
-admin.site.register(Match, MatchAdmin)
-admin.site.register(AbilityUpgrade, AbilityUpgradeAdmin)
-admin.site.register(PlayerInfo, PlayerInfoAdmin)
-admin.site.register(Hero)
-admin.site.register(Country)
-admin.site.register(Ability, AbilityAdmin)
-admin.site.register(Item, ItemAdmin)
+#admin.site.register(Player, PlayerAdmin)
+#admin.site.register(Match, MatchAdmin)
+#admin.site.register(AbilityUpgrade, AbilityUpgradeAdmin)
+#admin.site.register(PlayerInfo, PlayerInfoAdmin)
+admin.site.register(Heroes)
+admin.site.register(Countries)
+admin.site.register(Abilities, AbilityAdmin)
+admin.site.register(Items, ItemAdmin)

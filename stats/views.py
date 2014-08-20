@@ -3,7 +3,8 @@ from django.core.cache import cache
 from django.utils.encoding import smart_str, smart_unicode
 from django.core.urlresolvers import reverse
 from django.views import generic
-from stats.models import Player, Match, PlayerInfo, Hero, AbilityUpgrade, Country, Ability, Item
+#from stats.models import Player, Match, PlayerInfo, Hero, AbilityUpgrade, Country, Ability, Item
+from stats.models import Heroes, Countries, Abilities, Items
 from django.conf import settings
 from django.db.models import Q
 import time
@@ -292,54 +293,46 @@ class MatchDetail(generic.ListView):
         context['timeline_xp'] = new_xp
         return context
     
-class Heroes(generic.ListView):
+class HeroesList(generic.ListView):
     template_name = 'stats/heroes.html'
     context_object_name = 'heroes_list'
     
     def get_queryset(self):
         start = time.time()
-        heroes = Hero.objects.all()
+        heroes = Heroes.objects.all()
         if not heroes:
             heroes = modules.getHeroes()['result']['heroes']
             for h in heroes:
                 name = h['name'][14:]
                 hero_id = h.pop('id')
                 small_horizontal_portrait = settings.STEAM_CDN_HEROES_URL % (name , 'sb.png')
-                small_horizontal_portrait_uri = modules.stringifyImage(small_horizontal_portrait)
                 large_horizontal_portrait = settings.STEAM_CDN_HEROES_URL % (name , 'lg.png')
-                large_horizontal_portrait_uri = modules.stringifyImage(large_horizontal_portrait)
                 full_quality_horizontal_portrait = settings.STEAM_CDN_HEROES_URL % (name , 'full.png')
-                full_quality_horizontal_portrait_uri = modules.stringifyImage(full_quality_horizontal_portrait)
                 full_quality_vertical_portrait = settings.STEAM_CDN_HEROES_URL % (name , 'vert.jpg')
-                full_quality_vertical_portrait_uri = modules.stringifyImage(full_quality_vertical_portrait)
                 h.update({'hero_id' : hero_id,
-                          'small_horizontal_portrait' : small_horizontal_portrait,
-                          'small_horizontal_portrait_uri' : small_horizontal_portrait_uri,
-                          'large_horizontal_portrait' : large_horizontal_portrait,
-                          'large_horizontal_portrait_uri' : large_horizontal_portrait_uri,
-                          'full_quality_horizontal_portrait' : full_quality_horizontal_portrait,
-                          'full_quality_horizontal_portrait_uri' : full_quality_horizontal_portrait_uri,
-                          'full_quality_vertical_portrait' : full_quality_vertical_portrait,
-                          'full_quality_vertical_portrait_uri' : full_quality_vertical_portrait_uri,
-                          'hero_url' : settings.HERO_URL % (h['localized_name'].replace(' ', '_'))})
-                hero = Hero(**h)
+                    'small_horizontal_portrait' : small_horizontal_portrait,
+                    'large_horizontal_portrait' : large_horizontal_portrait,
+                    'full_quality_horizontal_portrait' : full_quality_horizontal_portrait,
+                    'full_quality_vertical_portrait' : full_quality_vertical_portrait,
+                    'hero_url' : settings.HERO_URL % (h['localized_name'].replace(' ', '_'))})
+                hero = Heroes(**h)
                 hero.save()
         for h in heroes:
             h.name = 'sprite-' + h.name[14:] + '_sb'
-            
+
         end = time.time()
-        total_time = end - start 
+        total_time = end - start
         print('total time: %s') %str(total_time)
         return heroes
 
-class Countries(generic.ListView):
+class CountriesList(generic.ListView):
     template_name = 'stats/countries.html'
     context_object_name = 'countries_list'
     
     def get_queryset(self):
-        countries = Country.objects.all()
+        countries = Countries.objects.all()
         if countries:
-            for c in countries:
+            for c in countries:                
                 c.countryCode_sprite = 'sprite-' + c.countryCode.lower()
             return countries
         else:
@@ -348,25 +341,21 @@ class Countries(generic.ListView):
                 countries = countries['geonames']
             for c in countries:
                 c['flag_url'] = settings.FLAG_URL % c['countryCode'].lower()
-                try:
-                    c['flag_uri'] = modules.stringifyImage(c['flag_url'])
-                except:
-                    print('error')
                 if c['areaInSqKm'] == '':
                     c['areaInSqKm'] = 0.0
                 coords = modules.getCountryCoordinates(smart_str(c['countryCode']), smart_str(c['countryName']))['geonames'][0]
                 c['latitude'] = coords['lat']
                 c['longitude'] = coords['lng']
-                country = Country(**c)           
+                country = Countries(**c)           
                 country.save()
         return countries
 
-class Abilities(generic.ListView):
+class AbilitiesList(generic.ListView):
     template_name = 'stats/abilities.html'
     context_object_name = 'abilities_list'
 
     def get_queryset(self ):
-        abilities = Ability.objects.all()
+        abilities = Abilities.objects.all()
         if abilities:
             for a in abilities:
                 a.sprite_name = 'sprite-' + a.name + '_hp1'
@@ -382,19 +371,18 @@ class Abilities(generic.ListView):
                 ability = {
                         'name' : a['name'],
                         'ability_id' : a['id'],
-                        'ability_img_url' : ability_img_url,
-                        'ability_img_uri' : ability_img_uri
+                        'ability_img_url' : ability_img_url
                         }
-                ability = Ability(**ability)
+                ability = Abilities(**ability)
                 ability.save()
         return abilities
 
-class Items(generic.ListView):
+class ItemsList(generic.ListView):
     template_name = 'stats/items.html'
     context_object_name = 'items_list'
 
     def get_queryset(self):
-        items = Item.objects.all()
+        items = Items.objects.all()
         if items:
             for i in items:
                 i.sprite_name = 'sprite-' + i.name[5:] + '_lg'
@@ -417,10 +405,9 @@ class Items(generic.ListView):
                         'secret_shop' : i['secret_shop'],
                         'side_shop' : i['side_shop'],
                         'recipe' : i['recipe'],
-                        'item_img_url' : item_img_url,
-                        'item_img_uri' : item_img_uri
+                        'item_img_url' : item_img_url
                 }
-                item = Item(**item)
+                item = Items(**item)
                 item.save()
         return items
 

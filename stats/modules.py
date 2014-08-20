@@ -3,10 +3,11 @@ import json
 import os
 import datetime
 import mimetypes
-from views import Player, Match, PlayerInfo
+#from views import Player, Match, PlayerInfo
 from django.conf import settings
 from urllib2 import URLError
-from stats.models import AbilityUpgrade
+#from stats.models import AbilityUpgrade
+from stats.models import AbilityUpgrades
 from djcelery import celery
 from time import sleep
 

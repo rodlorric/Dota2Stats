@@ -4,7 +4,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.core.urlresolvers import reverse
 from django.views import generic
 #from stats.models import Player, Match, PlayerInfo, Hero, AbilityUpgrade, Country, Ability, Item
-from stats.models import Heroes, Countries, Abilities, Items
+from stats.models import Heroes, Countries, Abilities, Items, Matches, AbilityUpgrades, MatchPlayers
 from django.conf import settings
 from django.db.models import Q
 import time
@@ -169,9 +169,10 @@ class MatchDetail(generic.ListView):
     
     def get_queryset(self):
         try:
-            match = Match.objects.get(match_id = self.kwargs['match_id'])
-        except Match.DoesNotExist:
-            match = modules.saveMatch(self.kwargs['match_id'])
+            match = Matches.objects.get(match_id = self.kwargs['match_id'])
+        except Matches.DoesNotExist:
+            #match = modules.saveMatch(self.kwargs['match_id'])
+            print('Do not save match yet!')
         cluster_list = clusters_json.JSON['regions']
         lobby_list = lobbies_json.JSON['lobbies']
         type_list = types_json.JSON['mods']
@@ -182,7 +183,7 @@ class MatchDetail(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super(MatchDetail, self).get_context_data(**kwargs)
-        players = Player.objects.filter(match_id = self.kwargs['match_id']).order_by('player_slot')
+        players = MatchPlayers.objects.filter(match_id = self.kwargs['match_id']).order_by('player_slot')
         exp_x_lvl = [0,0,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500]
         coordinates = []
         i = 0
@@ -201,50 +202,52 @@ class MatchDetail(generic.ListView):
                 hero_key = 'hero' + str(p.hero_id)
                 h = cache.get(hero_key)
                 if not h:
-                    h = Hero.objects.get(hero_id = p.hero_id)
+                    h = Heroes.objects.get(hero_id = p.hero_id)
                     cache.set(hero_key, h)
                 p.hero_id = h.hero_id
-                p.hero_img = h.small_horizontal_portrait_uri
+                p.hero_img = h.small_horizontal_portrait
                 p.hero_localized_name = h.localized_name
                 p.hero_name = 'sprite-' + h.name.replace('npc_dota_hero_','') + '_sb'
-            except Hero.DoesNotExist:
+            except Heroes.DoesNotExist:
                 h = Hero(name = 'Abandoned', localized_name = 'Abandoned' )
 
             acc_ids.append(p.account_id)
-            player_abilities = AbilityUpgrade.objects.filter(Q(match_id = p.match_id), Q(player_slot = p.player_slot)).order_by('time')
+            player_abilities = AbilityUpgrades.objects.filter(Q(match_id = p.match_id), Q(player_slot = p.player_slot)).order_by('time')
             for ab in player_abilities:
                 try:
-                    ability = Ability.objects.get(ability_id = ab.ability)
+                    ability = Abilities.objects.get(ability_id = ab.ability)
                     ab.name = 'sprite-' + ability.name + '_hp1'
-                except Ability.DoesNotExist:
+                except Abilities.DoesNotExist:
                     print('Ability ' + str(ab.ability) + ' does not exist')
-                xp = exp_x_lvl[ab.level] if p.player_slot<128 else -exp_x_lvl[ab.level]
-                timeline_xp.append((ab.time.strftime('%H:%M:%S'), xp))
+                xp = ab.experience if p.player_slot<128 else -ab.experience
+                #timeline_xp.append((ab.time.strftime('%H:%M:%S'), xp))
+                print('time... ' + str(datetime.timedelta(seconds=ab.time)))
+                timeline_xp.append((str(datetime.timedelta(seconds=ab.time)), xp))
             p.abilities = player_abilities
             i += 1
             try:
-                p.item_0_name = 'sprite-' + Item.objects.get(item_id = p.item_0).name.replace('item_','') + '_lg'
-            except Item.DoesNotExist:
+                p.item_0_name = 'sprite-' + Items.objects.get(item_id = p.item_0).name.replace('item_','') + '_lg'
+            except Items.DoesNotExist:
                 p.item_0_name = None
             try:
-                p.item_1_name = 'sprite-' + Item.objects.get(item_id = p.item_1).name.replace('item_','') + '_lg'
-            except Item.DoesNotExist:
+                p.item_1_name = 'sprite-' + Items.objects.get(item_id = p.item_1).name.replace('item_','') + '_lg'
+            except Items.DoesNotExist:
                 p.item_1_name = None
             try:
-                p.item_2_name = 'sprite-' + Item.objects.get(item_id = p.item_2).name.replace('item_','') + '_lg'
-            except Item.DoesNotExist:
+                p.item_2_name = 'sprite-' + Items.objects.get(item_id = p.item_2).name.replace('item_','') + '_lg'
+            except Items.DoesNotExist:
                 p.item_2_name = None
             try:
-                p.item_3_name = 'sprite-' + Item.objects.get(item_id = p.item_3).name.replace('item_','') + '_lg'
-            except Item.DoesNotExist:
+                p.item_3_name = 'sprite-' + Items.objects.get(item_id = p.item_3).name.replace('item_','') + '_lg'
+            except Items.DoesNotExist:
                 p.item_3_name = None
             try:
-                p.item_4_name = 'sprite-' + Item.objects.get(item_id = p.item_4).name.replace('item_','') + '_lg'
-            except Item.DoesNotExist:
+                p.item_4_name = 'sprite-' + Items.objects.get(item_id = p.item_4).name.replace('item_','') + '_lg'
+            except Items.DoesNotExist:
                 p.item_4_name = None
             try:
-                p.item_5_name = 'sprite-' + Item.objects.get(item_id = p.item_5).name.replace('item_','') + '_lg'
-            except Item.DoesNotExist:
+                p.item_5_name = 'sprite-' + Items.objects.get(item_id = p.item_5).name.replace('item_','') + '_lg'
+            except Items.DoesNotExist:
                 p.item_5_name = None
         player_info_list = modules.updatePlayerInfo(acc_ids)
         for p in players:
@@ -254,7 +257,7 @@ class MatchDetail(generic.ListView):
                 p.personaname = pi.personaname
                 p.avatar = pi.avatar
                 try:
-                    c = Country.objects.get(countryCode = pi.loccountrycode)
+                    c = Countries.objects.get(countryCode = pi.loccountrycode)
                     p.country = c.countryName
                     p.flag = 'sprite-' + c.countryCode.lower()
 
@@ -269,7 +272,7 @@ class MatchDetail(generic.ListView):
                                 coordinates.append(state['coordinates'])
                         else:
                             coordinates.append(country['coordinates'])
-                except Country.DoesNotExist:
+                except Countries.DoesNotExist:
                     p.country = None
                     p.flag = None
             else:

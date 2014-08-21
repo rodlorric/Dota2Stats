@@ -137,7 +137,7 @@ class HeroesxPlayer(generic.ListView):
         total_time = end - start      
         return sorted(h_list, key=lambda k: k.matches, reverse = True)
     
-def heroDetail(request, account_id, hero_id):
+def HeroDetail(request, account_id, hero_id):
     if account_id and hero_id:
         matchesxplayer = Player.objects.filter(Q(account_id = account_id), Q(hero_id = hero_id)).order_by('-match_id')
         matches = []
@@ -221,7 +221,6 @@ class MatchDetail(generic.ListView):
                     print('Ability ' + str(ab.ability) + ' does not exist')
                 xp = ab.experience if p.player_slot<128 else -ab.experience
                 #timeline_xp.append((ab.time.strftime('%H:%M:%S'), xp))
-                print('time... ' + str(datetime.timedelta(seconds=ab.time)))
                 timeline_xp.append((str(datetime.timedelta(seconds=ab.time)), xp))
             p.abilities = player_abilities
             i += 1
@@ -249,11 +248,15 @@ class MatchDetail(generic.ListView):
                 p.item_5_name = 'sprite-' + Items.objects.get(item_id = p.item_5).name.replace('item_','') + '_lg'
             except Items.DoesNotExist:
                 p.item_5_name = None
+        print('ids > ' + str(acc_ids))
         player_info_list = modules.updatePlayerInfo(acc_ids)
+        for pii in player_info_list:
+            print('pii > ' + str(pii.account_id) + ' > ' + str(pii.steamid) + ' > ' + str(pii.personaname))
         for p in players:
-            pi = [pi for pi in player_info_list if str(pi.steamid) == str(modules.getSteamID64bit(p.account_id))]
+            pi = [pi for pi in player_info_list if pi.account_id == p.account_id]
             if pi:
                 pi = pi[0]
+                print('pi account_id : ' + str(pi.account_id) + ' ' + str(pi.steamid) + ' ' + str(pi.personaname))
                 p.personaname = pi.personaname
                 p.avatar = pi.avatar
                 try:

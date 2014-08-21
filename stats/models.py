@@ -13,10 +13,32 @@ from django.db import models
 
 class Accounts(models.Model):
     account_id = models.BigIntegerField(primary_key=True)
-    fechamodificacion = models.DateTimeField(db_column='FechaModificacion') # Field name made lowercase.
-    steamid = models.CharField(db_column='steamId', max_length=36, blank=True) # Field name made lowercase.
+    lastmodified = models.DateTimeField()
+    steamid = models.CharField(db_column='steamId', max_length=36) # Field name made lowercase.
+    communityvisibilitystate = models.SmallIntegerField(blank=True, null=True)
+    profilestate = models.SmallIntegerField(blank=True, null=True)
+    personaname = models.CharField(max_length=100, blank=True)
+    lastlogoff = models.BigIntegerField(blank=True, null=True)
+    commentpermission = models.SmallIntegerField(blank=True, null=True)
+    profileurl = models.CharField(max_length=2000, blank=True)
+    avatar = models.CharField(max_length=2000, blank=True)
+    avatarmedium = models.CharField(max_length=2000, blank=True)
+    avatarfull = models.CharField(max_length=2000, blank=True)
+    personastate = models.SmallIntegerField(blank=True, null=True)
+    realname = models.CharField(max_length=100, blank=True)
+    primaryclanid = models.BigIntegerField(blank=True, null=True)
+    timecreated = models.BigIntegerField(blank=True, null=True)
+    personastateflags = models.SmallIntegerField(blank=True, null=True)
+    gameserverip = models.CharField(max_length=15, blank=True)
+    gameserversteamid = models.BigIntegerField(blank=True, null=True)
+    gameextrainfo = models.CharField(max_length=100, blank=True)
+    gameid = models.IntegerField(blank=True, null=True)
+    lobbysteamid = models.BigIntegerField(blank=True, null=True)
+    loccountrycode = models.CharField(max_length=100, blank=True)
+    locstatecode = models.CharField(max_length=20, blank=True)
+    loccityid = models.IntegerField(blank=True, null=True)
     class Meta:
-        managed = False
+        managed = True
         db_table = 'Accounts'
 
 class Heroes(models.Model):

@@ -13,8 +13,8 @@ from django.db import models
 
 class Accounts(models.Model):
     account_id = models.BigIntegerField(primary_key=True)
-    lastmodified = models.DateTimeField()
-    steamid = models.CharField(db_column='steamId', max_length=36) # Field name made lowercase.
+    #lastmodified = models.DateTimeField()
+    #steamid = models.CharField(db_column='steamId', max_length=36) # Field name made lowercase.
     communityvisibilitystate = models.SmallIntegerField(blank=True, null=True)
     profilestate = models.SmallIntegerField(blank=True, null=True)
     personaname = models.CharField(max_length=100, blank=True)

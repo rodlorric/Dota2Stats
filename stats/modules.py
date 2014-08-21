@@ -89,15 +89,11 @@ def resolveSteamId(account_id):
             #64 bits
             account_id = getSteamID64bit(int(account_id))            
         try:
-            print('querying player > ' + str(account_id))
-            player = Accounts.objects.get(steamid = account_id)
-            print('player returned > steamid > ' + str(player.steamid) + ' account_id > ' + str(player.account_id) + ' personaname > ' + str(player.personaname))
+            player = Accounts.objects.get(account_id = getSteamID32bit(account_id))
         except Accounts.DoesNotExist:                
-            player = Accounts(steamid = account_id)
-            print('player does not exists > steamid > ' + str(player.steamid) + ' account_id > ' + str(player.account_id))
+            player = Accounts(account_id = getSteamID32bit(account_id))
     else:
-        player = Accounts(steamid = 76561202255233023)
-    print('Player to be returned > steamid > ' + str(player.steamid) + ' account_id > ' + str(player.account_id) + ' personaname > ' + str(player.personaname))
+        player = Accounts(account_id = getSteamID32bit(76561202255233023))
     return player
 
 def updatePlayerInfo(account_id_list):
@@ -107,14 +103,12 @@ def updatePlayerInfo(account_id_list):
         player = resolveSteamId(account_id)
         if not player:
             try:
-                #p = PlayerInfo.objects.get(steamid = account_id)
-                p = Accounts.objects.get(steamid = account_id)
-                print('player found')
+                p = Accounts.objects.get(account_id = account_id)
                 player_info_list.append(p)
             except Accounts.DoesNotExist:
                 acc_list += str(account_id) + ','
         else:
-            acc_list += str(player.steamid) + ','
+            acc_list += str(getSteamID64bit(player.account_id)) + ','
     if acc_list != '':
         player_info = getPlayerSummaries(acc_list)
         if player_info:
@@ -122,31 +116,12 @@ def updatePlayerInfo(account_id_list):
                 player_info = pi
                 player_info['account_id'] = str(getSteamID32bit(player_info['steamid']))
                 player_info.pop('steamid')
-                """                
-                if 'lastlogoff' in player_info:    
-                    player_info['lastlogoff'] = str(datetime.datetime.fromtimestamp(int(player_info['lastlogoff'])).strftime('%Y-%m-%d %H:%M:%S'))
-                if 'timecreated' in player_info:
-                    player_info['timecreated'] = str(datetime.datetime.fromtimestamp(int(player_info['timecreated'])).strftime('%Y-%m-%d %H:%M:%S'))
-                """
-                print('post pop > ' + str(player_info))
-                if 'gameid' in player_info:
-                    p = Accounts(account_id=player_info['account_id'], gameid = player_info['gameid'])
+                p = Accounts(**player_info)
                 p.save()
-                """
-                try:
-                    p_check = Accounts.objects.get(account_id = p.account_id)
-                    p.update()
-                except Accounts.DoesNotExist:
-                    print('saving > ' + str(p.gameid))
-                    p.save()
-                    #print('Do not save yet!')
-                """
-                print('appending > ' + str(p.account_id) + ' > ' + str(p.steamid) + ' > ' + str(p.personaname)) 
                 player_info_list.append(p)
         else:
-            p = Accounts(steamid = str(account_id), personaname = 'Anonymous')
+            p = Accounts(account_id = str(getSteamID32bit(account_id)), personaname = 'Anonymous')
             player_info_list.append(p)
-    print('player info list... ' + str(player_info_list))
     return player_info_list
 
 def saveMatch(match_id):

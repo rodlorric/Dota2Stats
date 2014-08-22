@@ -165,7 +165,7 @@
 <script type="text/javascript">
 	function drawVisualization() {
     // Create and populate the data table.
-    var data_from_db = {{timeline_xp|safe}}
+    var data_from_db = {{match.xp|safe}}
     var data = google.visualization.arrayToDataTable(data_from_db);
       	
     // Create and draw the visualization.

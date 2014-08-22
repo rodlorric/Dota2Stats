@@ -179,6 +179,11 @@ class MatchDetail(generic.ListView):
         match.cluster = next((c['name'] for c in cluster_list if c['id'] == match.cluster), None)
         match.lobby_type = next((l['name'] for l in lobby_list if l['id'] == match.lobby_type), None)
         match.game_mode = next((l['name'] for l in type_list if l['id'] == match.game_mode), None)
+        new_xp = [['time','xp']]
+        xp = match.getXp(self.kwargs['match_id'])
+        for (time,x) in xp:
+            new_xp.append([str(datetime.timedelta(seconds=time)), x])
+        match.xp = new_xp
         return match
 
     def get_context_data(self, **kwargs):
@@ -219,9 +224,7 @@ class MatchDetail(generic.ListView):
                     ab.name = 'sprite-' + ability.name + '_hp1'
                 except Abilities.DoesNotExist:
                     print('Ability ' + str(ab.ability) + ' does not exist')
-                xp = ab.experience if p.player_slot<128 else -ab.experience
-                #timeline_xp.append((ab.time.strftime('%H:%M:%S'), xp))
-                timeline_xp.append((str(datetime.timedelta(seconds=ab.time)), xp))
+
             p.abilities = player_abilities
             i += 1
             try:
@@ -279,20 +282,11 @@ class MatchDetail(generic.ListView):
                 p.country = None
                 p.flag = None
 
-        sorted_xp = sorted(timeline_xp,key=itemgetter(0))
-        new_xp = []
-        
-        diff = 0
-        for xp in sorted_xp:
-            diff += xp[1]
-            new_xp.append([xp[0],diff])
-        
-        new_xp.insert(0,['time','xp'])
         context['players_list'] = players
         context['invalid_account_ids'] = settings.INVALID_ACCOUNT_IDS
         context['gmap_img'] = modules.gmap_img(coordinates)
         context['anon_img'] = settings.PLAYER_ANON_AVATAR
-        context['timeline_xp'] = new_xp
+
         return context
     
 class HeroesList(generic.ListView):

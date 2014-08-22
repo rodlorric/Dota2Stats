@@ -10,6 +10,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db import connection
 
 class Accounts(models.Model):
     account_id = models.BigIntegerField(primary_key=True)
@@ -107,6 +108,16 @@ class Matches(models.Model):
     class Meta:
         managed = False
         db_table = 'Matches'
+
+    def getXp(self, match_id):
+        cursor = connection.cursor()
+        result_set = None
+        try:
+            cursor.callproc("GetDifferenceExperienceByMatch", [match_id])
+            result_set = cursor.fetchall()
+        finally:
+            cursor.close()
+        return result_set
 
 class MatchPlayers(models.Model):
     match = models.ForeignKey('Matches', primary_key=True)

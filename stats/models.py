@@ -14,8 +14,6 @@ from django.db import connection
 
 class Accounts(models.Model):
     account_id = models.BigIntegerField(primary_key=True)
-    #lastmodified = models.DateTimeField()
-    #steamid = models.CharField(db_column='steamId', max_length=36) # Field name made lowercase.
     communityvisibilitystate = models.SmallIntegerField(blank=True, null=True)
     profilestate = models.SmallIntegerField(blank=True, null=True)
     personaname = models.CharField(max_length=100, blank=True)
@@ -58,8 +56,6 @@ class Heroes(models.Model):
     def __unicode__(self):
         return self.name
 
-
-
 class Incidencias(models.Model):
     incidenciaid = models.AutoField(db_column='incidenciaId', primary_key=True) # Field name made lowercase.
     fechaincidencia = models.DateTimeField(db_column='fechaIncidencia') # Field name made lowercase.
@@ -87,8 +83,6 @@ class Matches(models.Model):
     positive_votes = models.IntegerField(blank=True, null=True)
     negative_votes = models.IntegerField(blank=True, null=True)
     game_mode = models.IntegerField(blank=True, null=True)
-    fechamodificacion = models.DateTimeField(db_column='FechaModificacion') # Field name made lowercase.
-    condetalle = models.BooleanField(db_column='ConDetalle') # Field name made lowercase.
     radiant_captain = models.BigIntegerField(blank=True, null=True)
     dire_captain = models.BigIntegerField(blank=True, null=True)
     dire_team_id = models.IntegerField(blank=True, null=True)

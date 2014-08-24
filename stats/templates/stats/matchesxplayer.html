@@ -1,6 +1,7 @@
 <title>Dota 2 Stats :: {{personaname}} Match History</title>
 {% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'stats/style.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'stats/style.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'stats/heroes_stylesheet.css' %}" />
 <script type="text/javascript" src="{% static 'stats/jquery-latest.js' %}"></script> 
 <script type="text/javascript" src="{% static 'stats/jquery.tablesorter.js' %}"></script> 
 <script type="text/javascript">
@@ -46,9 +47,9 @@
 {% for match in match_list %}
 	<tr class="matchesxplayerrow" onclick="location.href='{% url 'player:match' match.match_id %}'">
 	    <td class="centerText"> {{ match.match_id }} </td>
-	    <td class="centerText"> <img style="border:thin solid black;" alt="{{match.hero}}" src="{{match.hero_img}}" title="{{match.hero}}"/> </td>
+	    <td class="centerText"> <i class="hero_sprite {{match.hero_img}}"></td>
 	    <td class="centerText"> {{match.result}} </td>
-	    <td class="centerText"> {{match.duration|time:'H:i:s'}} </td>
+	    <td class="centerText"> {{match.duration}} </td>
 	    <td class="centerText"> {{match.kills}}</td>
 	    <td class="centerText"> {{match.deaths}}</td>
 	    <td class="centerText"> {{match.assists}} </td>

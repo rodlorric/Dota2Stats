@@ -190,6 +190,9 @@ class MatchDetail(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(MatchDetail, self).get_context_data(**kwargs)
         players = MatchPlayers.objects.filter(match_id = self.kwargs['match_id']).order_by('player_slot')
+        player_abilities = AbilityUpgrades.objects.filter(match_id = self.kwargs['match_id']).order_by('time')
+        abilities = Abilities.objects.all()
+        heroes = Heroes.objects.all()
         coordinates = []
         i = 0
         player_info_list = []
@@ -204,7 +207,7 @@ class MatchDetail(generic.ListView):
                 hero_key = 'hero' + str(p.hero_id)
                 h = cache.get(hero_key)
                 if not h:
-                    h = Heroes.objects.get(hero_id = p.hero_id)
+                    h = heroes.get(hero_id = p.hero_id)
                     cache.set(hero_key, h)
                 p.hero_id = h.hero_id
                 p.hero_img = h.small_horizontal_portrait
@@ -214,15 +217,11 @@ class MatchDetail(generic.ListView):
                 h = Hero(name = 'Abandoned', localized_name = 'Abandoned' )
 
             acc_ids.append(p.account_id)
-            player_abilities = AbilityUpgrades.objects.filter(Q(match_id = p.match_id), Q(player_slot = p.player_slot)).order_by('time')
-            for ab in player_abilities:
-                try:
-                    ability = Abilities.objects.get(ability_id = ab.ability)
-                    ab.name = 'sprite-' + ability.name + '_hp1'
-                except Abilities.DoesNotExist:
-                    print('Ability ' + str(ab.ability) + ' does not exist')
-
-            p.abilities = player_abilities
+            pa_list = [pa for pa in player_abilities if pa.player_slot_id == p.player_slot]
+            for ab in pa_list:
+                ability = abilities.get(ability_id = ab.ability)
+                ab.name = 'sprite-' + ability.name + '_hp1'
+            p.abilities = pa_list
             i += 1
             try:
                 p.item_0_name = 'sprite-' + Items.objects.get(item_id = p.item_0).name.replace('item_','') + '_lg'

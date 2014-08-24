@@ -9,10 +9,10 @@ from urllib2 import URLError
 #from stats.models import AbilityUpgrade
 from stats.models import AbilityUpgrades, Accounts
 from djcelery import celery
-from time import sleep
+import time
 
 def webAPICall(url):
-    sleep(0.1)
+    time.sleep(0.1)
     try:
         raw_response = urllib2.urlopen(url).read()
     except URLError:
@@ -67,6 +67,30 @@ def resolveSteamId(account_id):
     account_id = str(account_id)
     player = None
     if account_id not in settings.INVALID_ACCOUNT_IDS:
+        if account_id.isdigit():
+            #64 bits, i.e. 76561198018435337
+            if len(str(account_id)) != 17:
+                account_id = getSteamID64bit(int(account_id))
+        else:
+            try:
+                account_id = getSteamID64bit(Accounts.objects.get(personaname = account_id).account_id)
+            except Accounts.DoesNotExist:
+                account_id = resolveVanityURL(account_id)
+                if account_id['response']['success'] != 42:
+                    account_id = account_id['response']['steamid']
+                else:
+                    account_id = 76561202255233023
+    else:
+        account_id = 76561202255233023
+    player = Accounts(account_id = account_id)
+    return player
+
+
+"""
+def resolveSteamId(account_id):
+    account_id = str(account_id)
+    player = None
+    if account_id not in settings.INVALID_ACCOUNT_IDS:
         # i.e. Sphexing
         if not account_id.isdigit():
             try:
@@ -95,32 +119,24 @@ def resolveSteamId(account_id):
     else:
         player = Accounts(account_id = getSteamID32bit(76561202255233023))
     return player
+"""
 
 def updatePlayerInfo(account_id_list):
     player_info_list = []
     acc_list = ''
     for account_id in account_id_list:
         player = resolveSteamId(account_id)
-        if not player:
-            try:
-                p = Accounts.objects.get(account_id = account_id)
-                player_info_list.append(p)
-            except Accounts.DoesNotExist:
-                acc_list += str(account_id) + ','
-        else:
-            acc_list += str(getSteamID64bit(player.account_id)) + ','
+        acc_list += str(player.account_id) + ','
     if acc_list != '':
-        player_info = getPlayerSummaries(acc_list)
-        if player_info:
-            for pi in player_info['response']['players']:
-                player_info = pi
-                player_info['account_id'] = str(getSteamID32bit(player_info['steamid']))
-                player_info.pop('steamid')
-                p = Accounts(**player_info)
-                p.save()
-                player_info_list.append(p)
-        else:
-            p = Accounts(account_id = str(getSteamID32bit(account_id)), personaname = 'Anonymous')
+        aclist = acc_list.split(',')
+        for a in aclist[:len(aclist)-1]:
+            if str(getSteamID32bit(a)) in settings.INVALID_ACCOUNT_IDS:
+                p = Accounts(account_id = str(getSteamID32bit(a)), personaname = 'Anonymous')                
+            else:
+                try:
+                    p = Accounts.objects.get(account_id = getSteamID32bit(a))
+                except Accounts.DoesNotExist:
+                    p = Accounts(account_id = str(getSteamID32bit(a)), personaname = 'Anonymous')
             player_info_list.append(p)
     return player_info_list
 

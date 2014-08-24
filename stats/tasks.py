@@ -1,6 +1,6 @@
 from djcelery import celery
 import modules
-from views import Player, Match, PlayerInfo
+#from views import Player, Match, PlayerInfo
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 

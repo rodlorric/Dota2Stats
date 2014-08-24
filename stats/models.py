@@ -1,138 +1,186 @@
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Remove `managed = False` lines if you wish to allow Django to create and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+#
+# Also note: You'll have to insert the output of 'django-admin.py sqlcustom [appname]'
+# into your database.
+from __future__ import unicode_literals
+
 from django.db import models
+from django.db import connection
 
-class Match(models.Model):
-    match_id = models.BigIntegerField()
-    match_seq_num = models.BigIntegerField()
-    start_time = models.DateTimeField('start time')
-    lobby_type = models.IntegerField() 
-    radiant_win = models.BooleanField()
-    duration = models.TimeField()
-    tower_status_radiant = models.IntegerField()
-    tower_status_dire = models.IntegerField()
-    barracks_status_radiant = models.IntegerField()
-    barracks_status_dire = models.IntegerField()
-    cluster = models.SmallIntegerField()
-    first_blood_time = models.IntegerField()
-    human_players = models.SmallIntegerField()
-    leagueid = models.IntegerField()
-    positive_votes = models.IntegerField()
-    negative_votes = models.IntegerField()
-    game_mode = models.IntegerField()
-    radiant_guild_id = models.IntegerField(null = True)
-    radiant_guild_name = models.CharField(max_length = 100, null = True)
-    radiant_guild_logo = models.BigIntegerField(null = True)
-    radiant_team_id = models.IntegerField(null = True)
-    radiant_name = models.CharField(max_length = 100, null = True)
-    radiant_logo = models.IntegerField(null = True)
-    radiant_team_complete = models.SmallIntegerField(null = True)
-    radiant_captain = models.BigIntegerField(null = True)
-    dire_guild_id = models.IntegerField(null = True)
-    dire_guild_name = models.CharField(max_length = 100, null = True)
-    dire_guild_logo = models.BigIntegerField(null = True)
-    dire_team_id = models.IntegerField(null = True)
-    dire_logo = models.IntegerField(null = True)
-    dire_team_complete = models.SmallIntegerField(null = True)
-    dire_name = models.CharField(max_length = 100, null = True)
-    dire_captain = models.BigIntegerField(null = True)
+class Accounts(models.Model):
+    account_id = models.BigIntegerField(primary_key=True)
+    communityvisibilitystate = models.SmallIntegerField(blank=True, null=True)
+    profilestate = models.SmallIntegerField(blank=True, null=True)
+    personaname = models.CharField(max_length=100, blank=True)
+    lastlogoff = models.BigIntegerField(blank=True, null=True)
+    commentpermission = models.SmallIntegerField(blank=True, null=True)
+    profileurl = models.CharField(max_length=2000, blank=True)
+    avatar = models.CharField(max_length=2000, blank=True)
+    avatarmedium = models.CharField(max_length=2000, blank=True)
+    avatarfull = models.CharField(max_length=2000, blank=True)
+    personastate = models.SmallIntegerField(blank=True, null=True)
+    realname = models.CharField(max_length=100, blank=True)
+    primaryclanid = models.BigIntegerField(blank=True, null=True)
+    timecreated = models.BigIntegerField(blank=True, null=True)
+    personastateflags = models.SmallIntegerField(blank=True, null=True)
+    gameserverip = models.CharField(max_length=15, blank=True)
+    gameserversteamid = models.BigIntegerField(blank=True, null=True)
+    gameextrainfo = models.CharField(max_length=100, blank=True)
+    gameid = models.IntegerField(blank=True, null=True)
+    lobbysteamid = models.BigIntegerField(blank=True, null=True)
+    loccountrycode = models.CharField(max_length=100, blank=True)
+    locstatecode = models.CharField(max_length=20, blank=True)
+    loccityid = models.IntegerField(blank=True, null=True)
+    class Meta:
+        managed = True
+        db_table = 'Accounts'
 
-    def __unicode__(self):
-        return str(self.match_id)
-    
-
-class AbilityUpgrade(models.Model):
-    match_id = models.BigIntegerField(null = True)
-    player_slot = models.SmallIntegerField(null = True)
-    ability = models.SmallIntegerField(null = True)
-    time = models.TimeField(null = True)
-    level = models.SmallIntegerField(null = True)
-    def __unicode__(self):
-        return 'match_id ' +str(self.match_id) + ' player_slot ' + str(self.player_slot) + ' ability ' + str(self.ability) + ' time ' + str(self.time)
-
-class Player(models.Model):
-    match_id = models.BigIntegerField()
-    account_id = models.BigIntegerField()
-    player_slot = models.SmallIntegerField()
-    hero_id = models.SmallIntegerField()
-    item_0 = models.IntegerField(default = None)
-    item_1 = models.IntegerField(default = None)
-    item_2 = models.IntegerField(default = None)
-    item_3 = models.IntegerField(default = None)
-    item_4 = models.IntegerField(default = None)
-    item_5 = models.IntegerField(default = None)
-    kills = models.IntegerField()
-    deaths = models.IntegerField()
-    assists = models.IntegerField()
-    leaver_status = models.SmallIntegerField(null = True)
-    gold = models.IntegerField()
-    last_hits = models.IntegerField()
-    denies = models.IntegerField()
-    gold_per_min = models.IntegerField()
-    xp_per_min = models.IntegerField()
-    gold_spent = models.IntegerField()
-    hero_damage = models.IntegerField()
-    tower_damage = models.IntegerField()
-    hero_healing = models.IntegerField()
-    level = models.IntegerField()
-    def __unicode__(self):
-        return str(self.account_id)
-    
-class PlayerInfo(models.Model):
-    steamid = models.BigIntegerField()
-    communityvisibilitystate = models.SmallIntegerField()
-    profilestate = models.SmallIntegerField(null = True)
-    personaname = models.CharField(max_length = 100, null = True)
-    lastlogoff = models.DateTimeField('lastlogoff', null = True)
-    commentpermission = models.SmallIntegerField(null = True)
-    profileurl = models.URLField(null = True)
-    avatar = models.URLField(null = True)
-    avatarmedium = models.URLField(null = True)
-    avatarfull = models.URLField(null = True)
-    personastate = models.SmallIntegerField(null = True)
-    realname = models.CharField(max_length = 100, null = True)
-    primaryclanid = models.BigIntegerField(null = True)
-    timecreated = models.DateTimeField(null = True)
-    personastateflags = models.SmallIntegerField(null = True)
-    gameserverip = models.IPAddressField(null = True)
-    gameserversteamid = models.BigIntegerField(null = True)
-    gameextrainfo = models.CharField(max_length = 100, null = True)
-    gameid = models.IntegerField(null = True)
-    lobbysteamid = models.BigIntegerField(null = True)
-    loccountrycode = models.CharField(max_length = 100, null = True)
-    locstatecode = models.CharField(max_length = 20, null = True)
-    loccityid = models.IntegerField(max_length = 20, null = True)
-    def __unicode__(self):
-        return str(self.steamid)
-    
-class Hero(models.Model):
+class Heroes(models.Model):
     name = models.CharField(max_length = 200)
-    hero_id = models.SmallIntegerField()
+    hero_id = models.SmallIntegerField(primary_key=True)
     localized_name = models.CharField(max_length = 200)
     small_horizontal_portrait = models.URLField()
-    small_horizontal_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
     large_horizontal_portrait = models.URLField()
-    large_horizontal_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
     full_quality_horizontal_portrait = models.URLField()
-    full_quality_horizontal_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
     full_quality_vertical_portrait = models.URLField()
-    full_quality_vertical_portrait_uri = models.CharField(max_length = 1000, blank=True, null=True)
     hero_url = models.URLField()
+    class Meta:
+        managed = False
+        db_table = 'Heroes'
+
     def __unicode__(self):
         return self.name
 
-class Ability(models.Model):
-    name = models.CharField(max_length = 200)
-    ability_id = models.IntegerField()
-    ability_img_url = models.URLField()
-    ability_img_uri = models.CharField(max_length=10000, blank=True, null=True)
-    def __unicode__(self):
-        return self.name
+class Incidencias(models.Model):
+    incidenciaid = models.AutoField(db_column='incidenciaId', primary_key=True) # Field name made lowercase.
+    fechaincidencia = models.DateTimeField(db_column='fechaIncidencia') # Field name made lowercase.
+    descripcion = models.CharField(max_length=8000)
+    class Meta:
+        managed = False
+        db_table = 'Incidencias'
 
+class Matches(models.Model):
+    radiant_win = models.NullBooleanField()
+    duration = models.IntegerField(blank=True, null=True)
+    start_time = models.BigIntegerField()
+    start_time_datetime = models.DateTimeField(db_column='start_time_DateTime', blank=True, null=True) # Field name made lowercase.
+    match_id = models.BigIntegerField(primary_key=True)
+    match_seq_num = models.BigIntegerField()
+    tower_status_radiant = models.IntegerField(blank=True, null=True)
+    tower_status_dire = models.IntegerField(blank=True, null=True)
+    barracks_status_radiant = models.IntegerField(blank=True, null=True)
+    barracks_status_dire = models.IntegerField(blank=True, null=True)
+    cluster = models.IntegerField(blank=True, null=True)
+    first_blood_time = models.IntegerField(blank=True, null=True)
+    lobby_type = models.IntegerField()
+    human_players = models.SmallIntegerField(blank=True, null=True)
+    leagueid = models.IntegerField(blank=True, null=True)
+    positive_votes = models.IntegerField(blank=True, null=True)
+    negative_votes = models.IntegerField(blank=True, null=True)
+    game_mode = models.IntegerField(blank=True, null=True)
+    radiant_captain = models.BigIntegerField(blank=True, null=True)
+    dire_captain = models.BigIntegerField(blank=True, null=True)
+    dire_team_id = models.IntegerField(blank=True, null=True)
+    dire_name = models.CharField(max_length=100, blank=True)
+    dire_logo = models.BigIntegerField(blank=True, null=True)
+    dire_team_complete = models.NullBooleanField()
+    radiant_team_id = models.IntegerField(blank=True, null=True)
+    radiant_name = models.CharField(max_length=100, blank=True)
+    radiant_logo = models.BigIntegerField(blank=True, null=True)
+    radiant_team_complete = models.NullBooleanField()
+    dire_guild_id = models.IntegerField(blank=True, null=True)
+    dire_guild_name = models.CharField(max_length=100, blank=True)
+    dire_guild_logo = models.BigIntegerField(blank=True, null=True)
+    radiant_guild_id = models.IntegerField(blank=True, null=True)
+    radiant_guild_name = models.CharField(max_length=100, blank=True)
+    radiant_guild_logo = models.BigIntegerField(blank=True, null=True)
+    class Meta:
+        managed = False
+        db_table = 'Matches'
 
-class Country(models.Model):
+    def getXp(self, match_id):
+        cursor = connection.cursor()
+        result_set = None
+        try:
+            cursor.callproc("GetDifferenceExperienceByMatch", [match_id])
+            result_set = cursor.fetchall()
+        finally:
+            cursor.close()
+        return result_set
+
+class MatchPlayers(models.Model):
+    match = models.ForeignKey('Matches', primary_key=True)
+    account = models.ForeignKey(Accounts, blank=True, null=True)
+    player_slot = models.SmallIntegerField()
+    hero_id = models.SmallIntegerField(blank=True, null=True)
+    item_0 = models.SmallIntegerField(blank=True, null=True)
+    item_1 = models.SmallIntegerField(blank=True, null=True)
+    item_2 = models.SmallIntegerField(blank=True, null=True)
+    item_3 = models.SmallIntegerField(blank=True, null=True)
+    item_4 = models.SmallIntegerField(blank=True, null=True)
+    item_5 = models.SmallIntegerField(blank=True, null=True)
+    kills = models.IntegerField(blank=True, null=True)
+    deaths = models.IntegerField(blank=True, null=True)
+    assists = models.IntegerField(blank=True, null=True)
+    leaver_status = models.IntegerField(blank=True, null=True)
+    gold = models.IntegerField(blank=True, null=True)
+    last_hits = models.IntegerField(blank=True, null=True)
+    denies = models.IntegerField(blank=True, null=True)
+    gold_per_min = models.IntegerField(blank=True, null=True)
+    xp_per_min = models.IntegerField(blank=True, null=True)
+    gold_spent = models.IntegerField(blank=True, null=True)
+    hero_damage = models.IntegerField(blank=True, null=True)
+    tower_damage = models.DecimalField(max_digits=18, decimal_places=0, blank=True, null=True)
+    hero_healing = models.DecimalField(max_digits=18, decimal_places=0, blank=True, null=True)
+    level = models.IntegerField(blank=True, null=True)
+    class Meta:
+        managed = False
+        db_table = 'Match_Players'
+
+class AdditionalUnits(models.Model):
+    match = models.ForeignKey('MatchPlayers')
+    player_slot = models.ForeignKey('MatchPlayers', db_column='player_slot', related_name='units_player_slot')
+    unitname = models.CharField(max_length=50)
+    item_0 = models.SmallIntegerField()
+    item_1 = models.SmallIntegerField()
+    item_2 = models.SmallIntegerField()
+    item_3 = models.SmallIntegerField()
+    item_4 = models.SmallIntegerField()
+    item_5 = models.SmallIntegerField()
+    class Meta:
+        managed = False
+        db_table = 'Additional_Units'
+
+class AbilityUpgrades(models.Model):
+    match = models.ForeignKey('MatchPlayers', primary_key=True)
+    player_slot = models.ForeignKey('MatchPlayers', db_column='player_slot', related_name='ability_player_slot')
+    ability = models.IntegerField()
+    time = models.IntegerField()
+    level = models.IntegerField()
+    experience = models.IntegerField(blank=True, null=True)
+    class Meta:
+        managed = False
+        db_table = 'Ability_Upgrades'
+
+class PicksBans(models.Model):
+    match = models.ForeignKey(Matches)
+    is_pick = models.BooleanField()
+    hero_id = models.SmallIntegerField()
+    team = models.BooleanField()
+    order = models.SmallIntegerField()
+    class Meta:
+        managed = False
+        db_table = 'Picks_Bans'
+
+class Countries(models.Model):
     countryCode = models.CharField(max_length = 2, blank = True, null = True)
     countryName = models.CharField(max_length = 100, blank = True, null = True)
     flag_url = models.URLField(blank = True, null = True)
-    flag_uri = models.CharField(max_length = 1000, blank=True, null=True)
     isoNumeric = models.CharField(max_length = 3, blank = True, null = True)
     isoAlpha3 = models.CharField(max_length = 3, blank = True, null = True)
     fipsCode = models.CharField(max_length = 2, blank = True, null = True)
@@ -142,7 +190,7 @@ class Country(models.Model):
     areaInSqKm = models.FloatField(blank = True, null = True)
     population = models.BigIntegerField(blank = True, null = True)
     currencyCode = models.CharField(max_length = 3, blank = True, null = True)
-    languages = models.CharField(max_length = 20, blank = True, null = True)
+    languages = models.CharField(max_length = 200, blank = True, null = True)
     geonameId = models.IntegerField(blank = True, null = True)
     west = models.FloatField(blank = True, null = True)
     north = models.FloatField(blank = True, null = True)
@@ -150,10 +198,14 @@ class Country(models.Model):
     south = models.FloatField(blank = True, null = True)
     latitude = models.FloatField(blank = True, null = True)
     longitude = models.FloatField(blank = True, null = True)
+    class Meta:
+        managed = True
+        db_table = 'Countries'
+
     def __unicode__(self):
         return self.countryName + ' - ' + self.countryCode
 
-class Item(models.Model):
+class Items(models.Model):
     item_id = models.SmallIntegerField()
     name = models.CharField(max_length=100)
     cost = models.SmallIntegerField(blank = True, null = True)
@@ -161,4 +213,21 @@ class Item(models.Model):
     side_shop = models.SmallIntegerField(blank = True, null = True)
     recipe = models.SmallIntegerField(blank = True, null = True)
     item_img_url = models.URLField(blank = True, null = True)
-    item_img_uri = models.CharField(max_length=10000, blank=True, null=True)
+    class Meta:
+        managed = True
+        db_table = 'Items'
+
+    def __unicode__(self):
+        return self.countryName + ' - ' + self.countryCode
+
+class Abilities(models.Model):
+    name = models.CharField(max_length = 200)
+    ability_id = models.IntegerField()
+    ability_img_url = models.URLField()
+    class Meta:
+        managed = True
+        db_table = 'Abilities'
+
+    def __unicode__(self):
+        return self.name
+

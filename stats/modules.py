@@ -3,10 +3,11 @@ import json
 import os
 import datetime
 import mimetypes
-from views import Player, Match, PlayerInfo
+#from views import Player, Match, PlayerInfo
 from django.conf import settings
 from urllib2 import URLError
-from stats.models import AbilityUpgrade
+#from stats.models import AbilityUpgrade
+from stats.models import AbilityUpgrades, Accounts
 from djcelery import celery
 from time import sleep
 
@@ -69,9 +70,9 @@ def resolveSteamId(account_id):
         # i.e. Sphexing
         if not account_id.isdigit():
             try:
-                player = PlayerInfo.objects.get(personaname = account_id)
+                player = Accounts.objects.get(personaname = account_id)
                 account_id = player.steamid
-            except PlayerInfo.DoesNotExist:
+            except Accounts.DoesNotExist:
                 player = None
                 account_id = resolveVanityURL(account_id)                
                 if account_id['response']['success'] != 42:
@@ -88,11 +89,11 @@ def resolveSteamId(account_id):
             #64 bits
             account_id = getSteamID64bit(int(account_id))            
         try:
-            player = PlayerInfo.objects.get(steamid = account_id)
-        except PlayerInfo.DoesNotExist:                
-            player = PlayerInfo(steamid = account_id)
+            player = Accounts.objects.get(account_id = getSteamID32bit(account_id))
+        except Accounts.DoesNotExist:                
+            player = Accounts(account_id = getSteamID32bit(account_id))
     else:
-        player = PlayerInfo(personaname = 'Anonymous', steamid = 76561202255233023)
+        player = Accounts(account_id = getSteamID32bit(76561202255233023))
     return player
 
 def updatePlayerInfo(account_id_list):
@@ -102,29 +103,24 @@ def updatePlayerInfo(account_id_list):
         player = resolveSteamId(account_id)
         if not player:
             try:
-                p = PlayerInfo.objects.get(steamid = account_id)
+                p = Accounts.objects.get(account_id = account_id)
                 player_info_list.append(p)
-            except PlayerInfo.DoesNotExist:
+            except Accounts.DoesNotExist:
                 acc_list += str(account_id) + ','
         else:
-            acc_list += str(player.steamid) + ','
+            acc_list += str(getSteamID64bit(player.account_id)) + ','
     if acc_list != '':
         player_info = getPlayerSummaries(acc_list)
-        if (player_info):
+        if player_info:
             for pi in player_info['response']['players']:
                 player_info = pi
-                if 'lastlogoff' in player_info:    
-                    player_info['lastlogoff'] = str(datetime.datetime.fromtimestamp(int(player_info['lastlogoff'])).strftime('%Y-%m-%d %H:%M:%S'))
-                if 'timecreated' in player_info:
-                    player_info['timecreated'] = str(datetime.datetime.fromtimestamp(int(player_info['timecreated'])).strftime('%Y-%m-%d %H:%M:%S'))
-                p = PlayerInfo(**player_info)                
-                try:
-                    p = PlayerInfo.objects.get(steamid = p.steamid)
-                except PlayerInfo.DoesNotExist:
-                    p.save()
+                player_info['account_id'] = str(getSteamID32bit(player_info['steamid']))
+                player_info.pop('steamid')
+                p = Accounts(**player_info)
+                p.save()
                 player_info_list.append(p)
         else:
-            p = PlayerInfo(steamid = str(account_id), personaname = 'Anonymous')
+            p = Accounts(account_id = str(getSteamID32bit(account_id)), personaname = 'Anonymous')
             player_info_list.append(p)
     return player_info_list
 

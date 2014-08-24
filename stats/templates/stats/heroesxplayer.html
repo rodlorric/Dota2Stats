@@ -1,6 +1,7 @@
 <title>Dota 2 Stats :: {{personaname}} Match History</title>
 {% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'stats/style.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'stats/style.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'stats/heroes_stylesheet.css' %}" />
 <script type="text/javascript" src="{% static 'stats/jquery-latest.js' %}"></script> 
 <script type="text/javascript" src="{% static 'stats/jquery.tablesorter.js' %}"></script> 
 <script type="text/javascript">
@@ -40,9 +41,9 @@
        </thead>
        <tbody>
 {% for hero in hero_list %}
-	<tr class="matchesxplayerrow" onclick="location.href='{% url 'player:herodetail' hero.account_id hero.id %}'">
+	<tr class="matchesxplayerrow" onclick="location.href='{% url 'player:herodetail' hero.account_id hero.hero_id %}'">
 	    <td class="centerText"> {{ hero.localized_name }} </td>
-	    <td class="centerText"> <img style="border:thin solid black;" alt="{{hero.localized_name}}" src="{{hero.small_horizontal_portrait_uri}}" title="{{hero.localized_name}}"/> </td>
+	    <td class="centerText"><i class="hero_sprite {{hero.name}}"></td>
 	    <td class="centerText"> {{ hero.matches }} </td>	    
 	    <td class="centerText"> {{ hero.wins }}</td>
 	    <td class="centerText"> {{ hero.loses }}</td>

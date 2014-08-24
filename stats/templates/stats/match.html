@@ -169,7 +169,7 @@
     var data = google.visualization.arrayToDataTable(data_from_db);
       	
     // Create and draw the visualization.
-    new google.visualization.LineChart(document.getElementById('xp_visualization')).
+    new google.visualization.AreaChart(document.getElementById('xp_visualization')).
     	draw(data, {colors: ['green'],
             		title: 'XP',
         			chartArea :{left:120,top:50,width:'75%',height:'50%'},

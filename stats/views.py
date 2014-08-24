@@ -7,13 +7,11 @@ from django.views import generic
 from stats.models import Heroes, Countries, Abilities, Items, Matches, AbilityUpgrades, MatchPlayers, Accounts, Matches
 from django.conf import settings
 from django.db.models import Q
-import time
 import modules
 import datetime
 import clusters_json
 import lobbies_json
 import types_json
-import time
 import heroes_json
 import abilities_json
 import urllib
@@ -25,6 +23,7 @@ from social_auth.db.django_models import UserSocialAuth
 from django.shortcuts import render
 import tasks
 from operator import itemgetter
+import time
 
 class PlayersView(generic.ListView):
     template_name = 'stats/players.html'
@@ -50,22 +49,28 @@ class MatchesxPlayer(generic.ListView):
     context_object_name = 'match_list'
     def get_queryset(self):
         account_id = self.kwargs['account_id']
+        heroes = Heroes.objects.all()
         #modules.updatePlayerInfo([account_id])
         #task = tasks.updatePlayer.delay(account_id)
-        playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id')
+        playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id').select_related('match')
         matches = []
         for matchxplayer in playermatches:
             try:
-                match = Matches.objects.get(Q(match_id = matchxplayer.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10))
+                #match = Matches.objects.get(Q(match_id = matchxplayer.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10))
+                match = matchxplayer.match
+                if not match.game_mode in settings.VALID_GAME_MODES and match.human_players != 10:
+                    continue
                 #hero = next((h for h in heroes.JSON['heroes'] if h['id'] == matchxplayer.hero_id), None)
                 try:
-                    hero = Heroes.objects.get(hero_id = matchxplayer.hero_id)
+                    #hero = heroes.get(hero_id = matchxplayer.hero_id)
+                    hero = [h for h in heroes if h.hero_id == matchxplayer.hero_id][0]
                     match.hero = hero.localized_name
                     #match.hero_img = heroes.IMG_URL % hero['name']
                     match.hero_img = 'sprite-' + hero.name[14:] + '_sb'
                 except Heroes.DoesNotExist:
                     hero = None
                 
+                match.duration = datetime.timedelta(seconds=match.duration)
                 match.kills = matchxplayer.kills
                 match.deaths = matchxplayer.deaths
                 match.assists = matchxplayer.assists
@@ -97,17 +102,19 @@ class HeroesxPlayer(generic.ListView):
     
     def get_queryset(self):
         account_id = self.kwargs['account_id']
+        heroes = Heroes.objects.all()
         #modules.updatePlayer(account_id)
         #task = tasks.updatePlayer.delay(account_id)        
         
         h_list = []
-        start = time.time()
+        start = time()
         #hero_var = heroes.JSON['heroes']
-        playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id')
+        playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id').select_related('match')
         for pm in playermatches:
             try:
-                match = Matches.objects.filter(Q(match_id = pm.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10)).get()
-                if match:
+                #match = Matches.objects.filter(Q(match_id = pm.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10)).get()
+                match = pm.match
+                if match and match.game_mode in settings.VALID_GAME_MODES and match.human_players == 10:
                     hero = None
                     for h in h_list:
                         if h.hero_id == pm.hero_id:
@@ -115,7 +122,7 @@ class HeroesxPlayer(generic.ListView):
                             break                    
                     if not hero:
                         #hero = next((h for h in hero_var if h['id'] == pm.hero_id), None)
-                        hero = Heroes.objects.get(hero_id = pm.hero_id)
+                        hero = [h for h in heroes if h.hero_id == pm.hero_id][0]
                         hero.matches = 0
                         hero.wins = 0
                         hero.loses = 0
@@ -138,14 +145,17 @@ class HeroesxPlayer(generic.ListView):
         return sorted(h_list, key=lambda k: k.matches, reverse = True)
     
 def HeroDetail(request, account_id, hero_id):
+    heroes = Heroes.objects.all()
     if account_id and hero_id:
-        matchesxplayer = MatchPlayers.objects.filter(Q(account_id = account_id), Q(hero_id = hero_id)).order_by('-match__match_id')
+        matchesxplayer = MatchPlayers.objects.filter(Q(account_id = account_id), Q(hero_id = hero_id)).order_by('-match__match_id').select_related('match')
         matches = []
         for matchxplayer in matchesxplayer:
             try:
-                match = Matches.objects.get(Q(match_id = matchxplayer.match_id), Q(human_players = 10))
+                #match = Matches.objects.get(Q(match_id = matchxplayer.match_id), Q(human_players = 10))
+                match = matchxplayer.match
                 #hero = next((h for h in heroes.JSON['heroes'] if h['id'] == matchxplayer.hero_id), None)
-                hero = Heroes.objects.get(hero_id = matchxplayer.hero_id)
+                #hero = heroes.get(hero_id = matchxplayer.hero_id)
+                hero = [h for h in heroes if h.hero_id == matchxplayer.hero_id][0]
                 match.hero = hero.localized_name
                 match.hero_img = 'sprite-' + hero.name[14:] + '_sb'
                 match.kills = matchxplayer.kills
@@ -174,6 +184,7 @@ class MatchDetail(generic.ListView):
         except Matches.DoesNotExist:
             #match = modules.saveMatch(self.kwargs['match_id'])
             print('Do not save match yet!')
+        
         cluster_list = clusters_json.JSON['regions']
         lobby_list = lobbies_json.JSON['lobbies']
         type_list = types_json.JSON['mods']
@@ -190,72 +201,104 @@ class MatchDetail(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(MatchDetail, self).get_context_data(**kwargs)
         players = MatchPlayers.objects.filter(match_id = self.kwargs['match_id']).order_by('player_slot')
-        player_abilities = AbilityUpgrades.objects.filter(match_id = self.kwargs['match_id']).order_by('time')
-        abilities = Abilities.objects.all()
-        heroes = Heroes.objects.all()
+        player_abilities = list(AbilityUpgrades.objects.filter(match_id = self.kwargs['match_id']))
+
+        ab_set = [ab.ability for ab in player_abilities]
+        abilities = list(Abilities.objects.filter(ability_id__in = ab_set))
+
+        hero_set = []
+        item_set = []
+        acc_ids = []
+        for p in players:
+            hero_set.append(p.hero_id)
+            item_set.append(p.item_0)
+            item_set.append(p.item_1)
+            item_set.append(p.item_2)
+            item_set.append(p.item_3)
+            item_set.append(p.item_4)
+            item_set.append(p.item_5)
+            acc_ids.append(p.account_id)
+
+        heroes = Heroes.objects.filter(hero_id__in = hero_set)
+        items = Items.objects.filter(item_id__in = item_set)
+        countries = Countries.objects.all()
+
         coordinates = []
         i = 0
-        player_info_list = []
-        acc_ids = []
+        player_info_list = modules.updatePlayerInfo(acc_ids)
+
         for p in players:
             if i < 5:
                 p.radiant = True
             else:
                 p.radiant = False
-            #h = next((h for h in heroes.JSON['heroes'] if h['id'] == p.hero_id), None)
-            try:
-                hero_key = 'hero' + str(p.hero_id)
-                h = cache.get(hero_key)
-                if not h:
-                    h = heroes.get(hero_id = p.hero_id)
-                    cache.set(hero_key, h)
+
+            h = [h for h in heroes if h.hero_id == p.hero_id]
+            if h:
+                h = h[0]            
                 p.hero_id = h.hero_id
                 p.hero_img = h.small_horizontal_portrait
                 p.hero_localized_name = h.localized_name
                 p.hero_name = 'sprite-' + h.name.replace('npc_dota_hero_','') + '_sb'
-            except Heroes.DoesNotExist:
+            else:
                 h = Hero(name = 'Abandoned', localized_name = 'Abandoned' )
 
-            acc_ids.append(p.account_id)
-            pa_list = [pa for pa in player_abilities if pa.player_slot_id == p.player_slot]
-            for ab in pa_list:
-                ability = abilities.get(ability_id = ab.ability)
-                ab.name = 'sprite-' + ability.name + '_hp1'
-            p.abilities = pa_list
+            p_ab_list = []
+            for pa in player_abilities:
+                if pa.player_slot_id == p.player_slot:
+                    ability = next((a for a in abilities if a.ability_id == pa.ability), None)
+                    pa.name = 'sprite-' + ability.name + '_hp1'
+                    p_ab_list.append(pa)
+            p.abilities = p_ab_list
             i += 1
-            try:
-                p.item_0_name = 'sprite-' + Items.objects.get(item_id = p.item_0).name.replace('item_','') + '_lg'
-            except Items.DoesNotExist:
+            
+            item = [item for item in items if item.item_id == p.item_0]
+            if item:
+                p.item_0_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
+            else:
                 p.item_0_name = None
-            try:
-                p.item_1_name = 'sprite-' + Items.objects.get(item_id = p.item_1).name.replace('item_','') + '_lg'
-            except Items.DoesNotExist:
+
+            item = [item for item in items if item.item_id == p.item_1]
+            if item:
+                p.item_1_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
+            else:
                 p.item_1_name = None
-            try:
-                p.item_2_name = 'sprite-' + Items.objects.get(item_id = p.item_2).name.replace('item_','') + '_lg'
-            except Items.DoesNotExist:
+
+            item = [item for item in items if item.item_id == p.item_2]
+            if item:
+                p.item_2_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
+            else:
                 p.item_2_name = None
-            try:
-                p.item_3_name = 'sprite-' + Items.objects.get(item_id = p.item_3).name.replace('item_','') + '_lg'
-            except Items.DoesNotExist:
+
+            item = [item for item in items if item.item_id == p.item_3]
+            if item:
+                p.item_3_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
+            else:
                 p.item_3_name = None
-            try:
-                p.item_4_name = 'sprite-' + Items.objects.get(item_id = p.item_4).name.replace('item_','') + '_lg'
-            except Items.DoesNotExist:
+
+            item = [item for item in items if item.item_id == p.item_4]
+            if item:
+                p.item_4_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
+            else:
                 p.item_4_name = None
-            try:
-                p.item_5_name = 'sprite-' + Items.objects.get(item_id = p.item_5).name.replace('item_','') + '_lg'
-            except Items.DoesNotExist:
+
+            item = [item for item in items if item.item_id == p.item_5]
+            if item:
+                p.item_5_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
+            else:
                 p.item_5_name = None
-        player_info_list = modules.updatePlayerInfo(acc_ids)
-        for p in players:
+
+
             pi = [pi for pi in player_info_list if str(pi.account_id) == str(p.account_id)]
             if pi:
                 pi = pi[0]
                 p.personaname = pi.personaname
                 p.avatar = pi.avatar
-                try:
-                    c = Countries.objects.get(countryCode = pi.loccountrycode)
+                c = [c for c in countries if c.countryCode == pi.loccountrycode]
+                if c:
+                #try:
+                    #c = Countries.objects.get(countryCode = pi.loccountrycode)
+                    c = c[0]
                     p.country = c.countryName
                     p.flag = 'sprite-' + c.countryCode.lower()
 
@@ -270,7 +313,8 @@ class MatchDetail(generic.ListView):
                                 coordinates.append(state['coordinates'])
                         else:
                             coordinates.append(country['coordinates'])
-                except Countries.DoesNotExist:
+                #except Countries.DoesNotExist:
+                else:
                     p.country = None
                     p.flag = None
             else:
@@ -282,7 +326,6 @@ class MatchDetail(generic.ListView):
         context['invalid_account_ids'] = settings.INVALID_ACCOUNT_IDS
         context['gmap_img'] = modules.gmap_img(coordinates)
         context['anon_img'] = settings.PLAYER_ANON_AVATAR
-
         return context
     
 class HeroesList(generic.ListView):

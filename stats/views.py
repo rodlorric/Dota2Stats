@@ -4,7 +4,7 @@ from django.utils.encoding import smart_str, smart_unicode
 from django.core.urlresolvers import reverse
 from django.views import generic
 #from stats.models import Player, Match, PlayerInfo, Hero, AbilityUpgrade, Country, Ability, Item
-from stats.models import Heroes, Countries, Abilities, Items, Matches, AbilityUpgrades, MatchPlayers
+from stats.models import Heroes, Countries, Abilities, Items, Matches, AbilityUpgrades, MatchPlayers, Accounts, Matches
 from django.conf import settings
 from django.db.models import Q
 import time
@@ -31,16 +31,16 @@ class PlayersView(generic.ListView):
     context_object_name = 'players_list'    
 
     def get_queryset(self):
-        pl = Player.objects.filter(~Q(account_id__in = settings.INVALID_ACCOUNT_IDS))[:20]
+        pl = MatchPlayers.objects.filter(~Q(account_id__in = settings.INVALID_ACCOUNT_IDS))[:20]
         new_pl = []
         for player in pl:        
             if any(player.account_id ==  s.account_id for s in new_pl):
                 continue
             else:
                 try:
-                    pi = PlayerInfo.objects.get(steamid = modules.getSteamID64bit(player.account_id))
+                    pi = Accounts.objects.get(account_id = player.account_id)
                     player.personaname = pi.personaname
-                except PlayerInfo.DoesNotExist:
+                except Accounts.DoesNotExist:
                     player.personaname = player.account_id
                 new_pl.append(player)
         return new_pl
@@ -50,20 +50,20 @@ class MatchesxPlayer(generic.ListView):
     context_object_name = 'match_list'
     def get_queryset(self):
         account_id = self.kwargs['account_id']
-        modules.updatePlayerInfo([account_id])
-        task = tasks.updatePlayer.delay(account_id)
-        playermatches = Player.objects.filter(account_id = account_id).order_by('-match_id')
+        #modules.updatePlayerInfo([account_id])
+        #task = tasks.updatePlayer.delay(account_id)
+        playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id')
         matches = []
         for matchxplayer in playermatches:
             try:
-                match = Match.objects.get(Q(match_id = matchxplayer.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10))
+                match = Matches.objects.get(Q(match_id = matchxplayer.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10))
                 #hero = next((h for h in heroes.JSON['heroes'] if h['id'] == matchxplayer.hero_id), None)
                 try:
-                    hero = Hero.objects.get(hero_id = matchxplayer.hero_id)
+                    hero = Heroes.objects.get(hero_id = matchxplayer.hero_id)
                     match.hero = hero.localized_name
                     #match.hero_img = heroes.IMG_URL % hero['name']
-                    match.hero_img = hero.small_horizontal_portrait_uri
-                except Hero.DoesNotExist:
+                    match.hero_img = 'sprite-' + hero.name[14:] + '_sb'
+                except Heroes.DoesNotExist:
                     hero = None
                 
                 match.kills = matchxplayer.kills
@@ -75,7 +75,7 @@ class MatchesxPlayer(generic.ListView):
                 else:
                     match.result = 'Lost Match'
                 matches.append(match)
-            except Match.DoesNotExist:
+            except Matches.DoesNotExist:
                 continue     
         return matches
     
@@ -84,9 +84,9 @@ class MatchesxPlayer(generic.ListView):
         account_id = self.kwargs['account_id']
         context['account_id'] = account_id
         try:            
-            pi = PlayerInfo.objects.get(steamid = modules.getSteamID64bit(int(account_id)))
+            pi = Accounts.objects.get(account_id = account_id)
             personaname = pi.personaname
-        except PlayerInfo.DoesNotExist:
+        except Accounts.DoesNotExist:
             personaname = 'Anonymous'
         context['personaname'] = personaname
         return context
@@ -98,15 +98,15 @@ class HeroesxPlayer(generic.ListView):
     def get_queryset(self):
         account_id = self.kwargs['account_id']
         #modules.updatePlayer(account_id)
-        task = tasks.updatePlayer.delay(account_id)        
+        #task = tasks.updatePlayer.delay(account_id)        
         
         h_list = []
         start = time.time()
         #hero_var = heroes.JSON['heroes']
-        playermatches = Player.objects.filter(account_id = account_id).order_by('-match_id')
+        playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id')
         for pm in playermatches:
             try:
-                match = Match.objects.filter(Q(match_id = pm.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10)).get()
+                match = Matches.objects.filter(Q(match_id = pm.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10)).get()
                 if match:
                     hero = None
                     for h in h_list:
@@ -115,12 +115,12 @@ class HeroesxPlayer(generic.ListView):
                             break                    
                     if not hero:
                         #hero = next((h for h in hero_var if h['id'] == pm.hero_id), None)
-                        hero = Hero.objects.get(hero_id = pm.hero_id)
+                        hero = Heroes.objects.get(hero_id = pm.hero_id)
                         hero.matches = 0
                         hero.wins = 0
                         hero.loses = 0
                         hero.winrate = 0.0
-                        #hero['small_horizontal_portrait'] = heroes.IMG_URL % hero['name']
+                        hero.name = 'sprite-' + hero.name[14:] + '_sb'
                         h_list.append(hero)
                     
                     hero.matches += 1
@@ -131,7 +131,7 @@ class HeroesxPlayer(generic.ListView):
                         hero.loses += 1
                     hero.winrate = round(((hero.wins * 1.0 / hero.matches * 1.0) * 100.0), 2)
                     hero.account_id = account_id
-            except Match.DoesNotExist:
+            except Matches.DoesNotExist:
                 continue
         end = time.time()
         total_time = end - start      
@@ -139,25 +139,26 @@ class HeroesxPlayer(generic.ListView):
     
 def HeroDetail(request, account_id, hero_id):
     if account_id and hero_id:
-        matchesxplayer = Player.objects.filter(Q(account_id = account_id), Q(hero_id = hero_id)).order_by('-match_id')
+        matchesxplayer = MatchPlayers.objects.filter(Q(account_id = account_id), Q(hero_id = hero_id)).order_by('-match__match_id')
         matches = []
         for matchxplayer in matchesxplayer:
             try:
-                match = Match.objects.get(Q(match_id = matchxplayer.match_id), Q(human_players = 10))
+                match = Matches.objects.get(Q(match_id = matchxplayer.match_id), Q(human_players = 10))
                 #hero = next((h for h in heroes.JSON['heroes'] if h['id'] == matchxplayer.hero_id), None)
-                hero = Hero.objects.get(hero_id = matchxplayer.hero_id)
+                hero = Heroes.objects.get(hero_id = matchxplayer.hero_id)
                 match.hero = hero.localized_name
-                match.hero_img = hero.small_horizontal_portrait_uri
+                match.hero_img = 'sprite-' + hero.name[14:] + '_sb'
                 match.kills = matchxplayer.kills
                 match.deaths = matchxplayer.deaths
                 match.assists = matchxplayer.assists
+                match.duration = datetime.timedelta(seconds=match.duration)
                 team = matchxplayer.player_slot      
                 if match.radiant_win and team < 128 or not match.radiant_win and team >= 128:
                     match.result = 'Won Match'
                 else:
                     match.result = 'Lost Match'
                 matches.append(match)
-            except Match.DoesNotExist:
+            except Matches.DoesNotExist:
                 continue
         context = {'match_list' : matches, 'account_id' : int(account_id)}
     return render(request, 'stats/matchesxplayer.html', context )
@@ -189,12 +190,8 @@ class MatchDetail(generic.ListView):
     def get_context_data(self, **kwargs):
         context = super(MatchDetail, self).get_context_data(**kwargs)
         players = MatchPlayers.objects.filter(match_id = self.kwargs['match_id']).order_by('player_slot')
-        exp_x_lvl = [0,0,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500]
         coordinates = []
         i = 0
-        dire_exp = 0
-        rad_exp = 0
-        timeline_xp = []
         player_info_list = []
         acc_ids = []
         for p in players:
@@ -313,6 +310,9 @@ class HeroesList(generic.ListView):
                     'hero_url' : settings.HERO_URL % (h['localized_name'].replace(' ', '_'))})
                 hero = Heroes(**h)
                 hero.save()
+        else:
+            #Parranda agrego un Heroe NA en la tabla hero_id = 0.
+            heroes = heroes[1:]
         for h in heroes:
             h.name = 'sprite-' + h.name[14:] + '_sb'
 
@@ -423,16 +423,16 @@ class WinrateView(generic.ListView):
         personaname = ''
         for aid in account_ids:
             try:
-                pi = PlayerInfo.objects.get(steamid = modules.getSteamID64bit(int(aid)))
+                pi = Accounts.objects.get(account_id = aid)
                 personaname += pi.personaname + ' '
-            except PlayerInfo.DoesNotExist:
+            except Accounts.DoesNotExist:
                 personaname += 'Anonymous '
         account_id = account_ids.pop(0)
         if num_matches:
-            matchesxplayer = Player.objects.filter(account_id = account_id).order_by('-match_id')[:num_matches]
+            matchesxplayer = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id')[:num_matches]
             matchesxplayer = reversed(matchesxplayer)
         else:
-            matchesxplayer = reversed(Player.objects.filter(account_id = account_id).order_by('-match_id'))
+            matchesxplayer = reversed(MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id'))
         i = 1.0
         v_acum = 0
         wins = 0
@@ -442,8 +442,8 @@ class WinrateView(generic.ListView):
         wr_data = []
         for mxp in matchesxplayer:
             try:
-                match = Match.objects.filter(Q(match_id = mxp.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10)).get()
-                players_from_match = Player.objects.filter(match_id = mxp.match_id)
+                match = Matches.objects.filter(Q(match_id = mxp.match_id), Q(game_mode__in = settings.VALID_GAME_MODES), Q(human_players = 10)).get()
+                players_from_match = MatchPlayers.objects.filter(match_id = mxp.match_id)
                 leaver = False
                 id_counter = 0
                 for pfm in players_from_match:
@@ -451,15 +451,16 @@ class WinrateView(generic.ListView):
                         id_counter += 1
                     if pfm.leaver_status in [2,3]:
                     #if pfm.leaver_status in [9999]:
-                        au = AbilityUpgrade.objects.filter(Q(match_id = mxp.match_id), Q(player_slot = pfm.player_slot)).order_by('-time')
+                        au = AbilityUpgrades.objects.filter(Q(match_id = mxp.match_id), Q(player_slot = pfm.player_slot)).order_by('-time')
                         if au:
                             #if pfm.leaver_status in [2,3]:
                                 five_minutes = datetime.time(0, 5, 0)
                                 td = datetime.timedelta(seconds=int(match.first_blood_time))
                                 tds = [int(x) for x in str(td).split(':')]
                                 first_blood = datetime.time(tds[0], tds[1], tds[2])
-                                last_au = au[0].time
-                                
+                                au = datetime.timedelta(seconds=int(au[0].time))
+                                au_td = [int(x) for x in str(au).split(':')]
+                                last_au = datetime.time(au_td[0], au_td[1], au_td[2])
                                 if last_au < five_minutes and last_au < first_blood:
                                     leaver = True
                                     break
@@ -471,7 +472,7 @@ class WinrateView(generic.ListView):
                             break
                 if leaver or id_counter != len(account_ids):
                     continue
-            except Match.DoesNotExist:
+            except Matches.DoesNotExist:
                 continue
                           
             team = int(mxp.player_slot)

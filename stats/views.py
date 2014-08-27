@@ -322,32 +322,33 @@ class MatchDetail(generic.ListView):
                 p.personaname = 'Anonymous'
                 p.country = None
                 p.flag = None
+        if players:
+            players.insert(5, radiant_totals)
+            players.append(dire_totals)
+            #hero_list.append('Total XP Diff')
+            allplayersxp = MatchPlayers.objects.getAllPlayersXPByMatch(match_id)
 
-        players.insert(5, radiant_totals)
-        players.append(dire_totals)
-        #hero_list.append('Total XP Diff')
-        allplayersxp = MatchPlayers.objects.getAllPlayersXPByMatch(match_id)
+            radxp = hero_list[:5]
+            direxp = hero_list[5:]
+            radxp.insert(0, 'Time')
+            direxp.insert(0, 'Time')
+            radxp = [radxp]
+            direxp = [direxp]
+            matchxp = [['Time','XP Diff']]
 
-        radxp = hero_list[:5]
-        direxp = hero_list[5:]
-        radxp.insert(0, 'Time')
-        direxp.insert(0, 'Time')
-        radxp = [radxp]
-        direxp = [direxp]
-        matchxp = [['Time','XP Diff']]
+            for (time, rad0, rad1, rad2, rad3, rad4, dir128, dir129, dir130, dir131, dir132, xp) in allplayersxp:
+                matchxp.append([str(datetime.timedelta(seconds=time)), xp])
+                radxp.append([str(datetime.timedelta(seconds=time)), rad0, rad1, rad2, rad3, rad4])
+                direxp.append([str(datetime.timedelta(seconds=time)), dir128, dir129, dir130, dir131, dir132])
+            context['matchxp'] = matchxp
+            context['radxp'] = radxp
+            context['direxp'] = direxp
 
-        for (time, rad0, rad1, rad2, rad3, rad4, dir128, dir129, dir130, dir131, dir132, xp) in allplayersxp:
-            matchxp.append([str(datetime.timedelta(seconds=time)), xp])
-            radxp.append([str(datetime.timedelta(seconds=time)), rad0, rad1, rad2, rad3, rad4])
-            direxp.append([str(datetime.timedelta(seconds=time)), dir128, dir129, dir130, dir131, dir132])
-        context['matchxp'] = matchxp
-        context['radxp'] = radxp
-        context['direxp'] = direxp
+            context['players_list'] = players
+            context['invalid_account_ids'] = settings.INVALID_ACCOUNT_IDS
+            context['gmap_img'] = modules.gmap_img(coordinates)
+            context['anon_img'] = settings.PLAYER_ANON_AVATAR
 
-        context['players_list'] = players
-        context['invalid_account_ids'] = settings.INVALID_ACCOUNT_IDS
-        context['gmap_img'] = modules.gmap_img(coordinates)
-        context['anon_img'] = settings.PLAYER_ANON_AVATAR
         return context
     
 class HeroesList(generic.ListView):

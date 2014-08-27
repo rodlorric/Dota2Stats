@@ -284,42 +284,18 @@ class MatchDetail(generic.ListView):
             i += 1
             
             item = [item for item in items if item.item_id == p.item_0]
-            if item:
-                p.item_0_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
-            else:
-                p.item_0_name = None
-
+            p.item_0_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
             item = [item for item in items if item.item_id == p.item_1]
-            if item:
-                p.item_1_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
-            else:
-                p.item_1_name = None
-
+            p.item_1_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
             item = [item for item in items if item.item_id == p.item_2]
-            if item:
-                p.item_2_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
-            else:
-                p.item_2_name = None
-
+            p.item_2_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
             item = [item for item in items if item.item_id == p.item_3]
-            if item:
-                p.item_3_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
-            else:
-                p.item_3_name = None
-
+            p.item_3_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
             item = [item for item in items if item.item_id == p.item_4]
-            if item:
-                p.item_4_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
-            else:
-                p.item_4_name = None
-
+            p.item_4_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
             item = [item for item in items if item.item_id == p.item_5]
-            if item:
-                p.item_5_name = 'sprite-' + item[0].name.replace('item_','') + '_lg'
-            else:
-                p.item_5_name = None
-
-
+            p.item_5_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
+            
             pi = [pi for pi in player_info_list if str(pi.account_id) == str(p.account_id)]
             if pi:
                 pi = pi[0]

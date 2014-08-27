@@ -76,10 +76,10 @@
         	</thead>
         	<tbody>
 		    {% for player in players_list %}
-		    	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
+		    	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if player.account_id != None and player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
 			    	<td class="leftText">
 			    		<ul id="list">
-				    		{% if player.avatar%}
+				    		{% if player.avatar %}
 				    			<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/></li>
 				    		{% else %}
 				    			<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{anon_img}}" title="{{player.personaname}}"/></li>

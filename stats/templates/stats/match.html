@@ -16,8 +16,10 @@
 </script>
 
 <h1>{{ match.match_id }}</h1>
-<a href="http://dotabuff.com/matches/{{match.match_id}}">Match on Dotabuff</a>
-<table>
+
+{% if players_list %}
+    <a href="http://dotabuff.com/matches/{{match.match_id}}">Match on Dotabuff</a>
+	<table>
 		<tr>
           	<th>Date</th>
           	<th>Lobby</th>
@@ -50,214 +52,190 @@
           		{{match.cluster}}
           	</td>
         </tr>
-</table>
+	</table>
+	<ul>
+	<table id="match" class="tablesorter">
+		<thead>
+			<tr>
+		        <th>Player</th>
+		        <th>Hero</th>
+		        <th>Level</th>
+		        <th>Kills</th>
+		        <th>Deaths</th>
+		        <th>Assists</th>
+		        <th>Last Hits</th>
+		        <th>Denies</th>
+		        <th>GPM</th>
+		        <th>XPM</th>
+		        <th>Hero Damage</th>
+		        <th>Hero Healing</th>
+		        <th>Tower Damage</th>
+		        <th>Items</th>
+		        <th>Abilities</th>    	
+	        </tr>
+	    </thead>
+        <tbody>
+		{% for player in players_list %}
+		   	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if players.account_id != None and player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
+			    <td class="leftText">
+			    	<ul id="list">
+				    	{% if player.avatar %}
+				    		<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/></li>
+				    	{% else %}
+				    		<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{anon_img}}" title="{{player.personaname}}"/></li>
+				    	{% endif %}
+			          	<li>{{player.personaname}}</li>
+			          	{% if player.country and player.flag %}
+			          		<li><i class="country_sprite {{player.flag}}"></i></li>
+			          	{% endif %}
+		          	</ul>
+		        </td>
+		        <td class="centerText">
+		        	{% if player.hero_name %}
+		            	<i class="hero_sprite {{player.hero_name}}"></i>
+		            {% endif %}
+		        </td>
+		        <td class="centerText">
+		           	{{player.level}}
+		        </td>
+		        <td class="centerText">
+		            {{player.kills}}
+		        </td>
+		        <td class="centerText">
+		           	{{player.deaths}}
+		        </td>
+		        <td class="centerText">
+		            {{player.assists}}
+		        </td>
+		        <td class="centerText">
+		            {{player.last_hits}}
+		        </td>
+	          	<td class="centerText">
+	            	{{player.denies}}
+	          	</td>
+	          	<td class="centerText">
+	            	{{player.gold_per_min}}
+	          	</td>
+	          	<td class="centerText">
+	            	{{player.xp_per_min}}
+	          	</td>
+	          	<td class="centerText">
+	            	{{player.hero_damage}}
+	          	</td>
+	          	<td class="centerText">
+	            	{{player.hero_healing}}
+	          	</td>
+	          	<td class="centerText">
+	            	{{player.tower_damage}}
+	          	</td>
+	          	<td>
+	            	<ul id="list">
+		            	{% if player.item_0 %}<li><i class="item_sprite {{player.item_0_name}}"></i></li>{% endif %}
+		            	{% if player.item_1 %}<li><i class="item_sprite {{player.item_1_name}}"></i></li>{% endif %}
+		            	{% if player.item_2 %}<li><i class="item_sprite {{player.item_2_name}}"></i></li>{% endif %}
+		            	{% if player.item_3 %}<li><i class="item_sprite {{player.item_3_name}}"></i></li>{% endif %}
+		            	{% if player.item_4 %}<li><i class="item_sprite {{player.item_4_name}}"></i></li>{% endif %}
+		            	{% if player.item_5 %}<li><i class="item_sprite {{player.item_5_name}}"></i></li>{% endif %}
+		            </ul>
+	          	</td>
+	          	<td>
+	          		<ul id="list">
+			        	{% for a in player.abilities %}
+				    		<li>
+				    			<i class="ability_sprite {{a.name}}"></i>
+				    		<li>
+				    	{% endfor %}		        
+			    	</ul>
+		       	</td>
+			</tr>
+	    {% endfor %}
+	    </tbody>
+    </ul>
+	</table>
+		
+	<img src="{{gmap_img}}">
+	<p></p>
+	<!--Load the AJAX API-->
+	<script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
+	<script type="text/javascript">
+	    google.load('visualization', '1', {packages: ['corechart']});
+	</script>
+	<div id="allxp_visualization" style="width:1024; height:600px"></div>
+	<p></p>
+	<div id="radxp_visualization" style="width:1024; height:600px"></div>
+	<p></p>
+	<div id="direxp_visualization" style="width:1024; height:600px"></div>
+	<p></p>
+	<script type="text/javascript">
+		function drawVisualization() {
+	    // Create and populate the data table.
+	    var data_from_db = {{matchxp|safe}}
+	    var data = google.visualization.arrayToDataTable(data_from_db);
+	      	
+	    // Create and draw the visualization.
+	    new google.visualization.AreaChart(document.getElementById('allxp_visualization')).
+	    	draw(data, {colors: ['green'],
+	            		title: 'Match Experience Difference',
+	        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
+			}
+	        );
+	      }
 
-        {% if players_list %}
-		    <ul>
-		    <table id="match" class="tablesorter">
-		    <thead>
-		    <tr>
-	          	<th>Player</th>
-	          	<th>Hero</th>
-	          	<th>Level</th>
-	          	<th>Kills</th>
-	          	<th>Deaths</th>
-	          	<th>Assists</th>
-	          	<th>Last Hits</th>
-	          	<th>Denies</th>
-	          	<th>GPM</th>
-	          	<th>XPM</th>
-	          	<th>Hero Damage</th>
-	          	<th>Hero Healing</th>
-	          	<th>Tower Damage</th>
-	          	<th>Items</th>
-	          	<th>Abilities</th>    	
-        	</tr>
-        	</thead>
-        	<tbody>
-		    {% for player in players_list %}
-		    	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if player.account_id != None and player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
-			    	<td class="leftText">
-			    		<ul id="list">
-				    		{% if player.avatar %}
-				    			<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/></li>
-				    		{% else %}
-				    			<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{anon_img}}" title="{{player.personaname}}"/></li>
-				    		{% endif %}
-			          		<li>{{player.personaname}}</li>
-			          		{% if player.country and player.flag %}
-			          			<li><i class="country_sprite {{player.flag}}"></i></li>
-			          		{% endif %}
-		          		</ul>
-		          	</td>
-		          	<td class="centerText">
-		          		{% if player.hero_name %}    
-		            		<i class="hero_sprite {{player.hero_name}}"></i>
-		            	{% endif %}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.level}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.kills}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.deaths}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.assists}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.last_hits}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.denies}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.gold_per_min}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.xp_per_min}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.hero_damage}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.hero_healing}}
-		          	</td>
-		          	<td class="centerText">
-		            	{{player.tower_damage}}
-		          	</td>
-		          	<td>
-		            	<ul id="list">
-			            	{% if player.item_0 %}<li><i class="item_sprite {{player.item_0_name}}"></i></li>{% endif %}
-			            	{% if player.item_1 %}<li><i class="item_sprite {{player.item_1_name}}"></i></li>{% endif %}
-			            	{% if player.item_2 %}<li><i class="item_sprite {{player.item_2_name}}"></i></li>{% endif %}
-			            	{% if player.item_3 %}<li><i class="item_sprite {{player.item_3_name}}"></i></li>{% endif %}
-			            	{% if player.item_4 %}<li><i class="item_sprite {{player.item_4_name}}"></i></li>{% endif %}
-			            	{% if player.item_5 %}<li><i class="item_sprite {{player.item_5_name}}"></i></li>{% endif %}
-			            </ul>
-		          	</td>
-		          	<td>
-		          		<ul id="list">
-				        	{% for a in player.abilities %}
-					    		<li>
-					    			<i class="ability_sprite {{a.name}}"></i>
-					    		<li>
-					    	{% endfor %}		        
-				    	</ul>
-			       	</td>
-				</tr>
-		    {% endfor %}
-		    </tbody>
-		    </ul>
-		</table>
-		{% else %}
-		    <p>Match not found!</p>
-		{% endif %}
-<img src="{{gmap_img}}">
-<p>
+	     google.setOnLoadCallback(drawVisualization);
+	</script>
 
-<div id="xp_visualization" style="width:1024; height:1024px"/>
+	<script type="text/javascript">
+		function drawVisualization() {
+	    // Create and populate the data table.
+	    var data_from_db = {{radxp|safe}}
+	    var data = google.visualization.arrayToDataTable(data_from_db);
+	      	
+	    // Create and draw the visualization.
+	    new google.visualization.AreaChart(document.getElementById('radxp_visualization')).
+	    	draw(data, {colors: ['#3D78F8', '#76FBC2', '#C501BA', '#EDEF1F', '#FC6B00'],
+	            		title: 'Total Radiant Experience',
+	        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
+	        			curveType: 'function',
+	        			isStacked: true,
+	        			series: {
+				            0: { lineWidth: 2 },
+				            1: { lineWidth: 2 },
+				            2: { lineWidth: 2 },
+				            3: { lineWidth: 2 },
+				            4: { lineWidth: 2 }
+	          },
+			}
+	        );
+	      }
 
-<!--Load the AJAX API-->
-<script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
-<script type="text/javascript">
-    google.load('visualization', '1', {packages: ['corechart']});
-</script>
-<!--
-<script type="text/javascript">
-	function drawVisualization() {
-    // Create and populate the data table.
-    var data_from_db = {{match.xp|safe}}
-    var data = google.visualization.arrayToDataTable(data_from_db);
-      	
-    // Create and draw the visualization.
-    new google.visualization.AreaChart(document.getElementById('xp_visualization')).
-    	draw(data, {colors: ['green'],
-            		title: 'XP',
-        			chartArea :{left:120,top:50,width:'75%',height:'50%'},
-        			curveType: 'function'}
-        );
-      }
+	     google.setOnLoadCallback(drawVisualization);
+	</script>
+	<script type="text/javascript">
+		function drawVisualization() {
+	    // Create and populate the data table.
+	    var data_from_db = {{direxp|safe}}
+	    var data = google.visualization.arrayToDataTable(data_from_db);
+	      	
+	    // Create and draw the visualization.
+	    new google.visualization.AreaChart(document.getElementById('direxp_visualization')).
+	    	draw(data, {colors: ['#FF89C6', '#A1B449', '#68DBF6', '#038722', '#A66B07'],
+	            		title: 'Total Dire Experience',
+	        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
+	        			curveType: 'function',
+	        			isStacked: true,
+	        			series: {
+				            0: { lineWidth: 2 },
+				            1: { lineWidth: 2 },
+				            2: { lineWidth: 2 },
+				            3: { lineWidth: 2 },
+				            4: { lineWidth: 2 }
+	          },
+			}
+	        );
+	      }
 
-     google.setOnLoadCallback(drawVisualization);
-</script>
--->
-<div id="allxp_visualization" style="width:1024; height:600px"></div>
-<p></p>
-<div id="radxp_visualization" style="width:1024; height:600px"></div>
-<p></p>
-<div id="direxp_visualization" style="width:1024; height:600px"></div>
-<p></p>
-<script type="text/javascript">
-	function drawVisualization() {
-    // Create and populate the data table.
-    var data_from_db = {{matchxp|safe}}
-    var data = google.visualization.arrayToDataTable(data_from_db);
-      	
-    // Create and draw the visualization.
-    new google.visualization.AreaChart(document.getElementById('allxp_visualization')).
-    	draw(data, {colors: ['green'],
-            		title: 'Match Experience Difference',
-        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
-}
-        );
-      }
-
-     google.setOnLoadCallback(drawVisualization);
-</script>
-
-<script type="text/javascript">
-	function drawVisualization() {
-    // Create and populate the data table.
-    var data_from_db = {{radxp|safe}}
-    var data = google.visualization.arrayToDataTable(data_from_db);
-      	
-    // Create and draw the visualization.
-    new google.visualization.AreaChart(document.getElementById('radxp_visualization')).
-    	draw(data, {colors: ['#3D78F8', '#76FBC2', '#C501BA', '#EDEF1F', '#FC6B00'],
-            		title: 'Total Radiant Experience',
-        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
-        			curveType: 'function',
-        			isStacked: true,
-        			series: {
-			            0: { lineWidth: 2 },
-			            1: { lineWidth: 2 },
-			            2: { lineWidth: 2 },
-			            3: { lineWidth: 2 },
-			            4: { lineWidth: 2 }
-          },
-}
-        );
-      }
-
-     google.setOnLoadCallback(drawVisualization);
-</script>
-<script type="text/javascript">
-	function drawVisualization() {
-    // Create and populate the data table.
-    var data_from_db = {{direxp|safe}}
-    var data = google.visualization.arrayToDataTable(data_from_db);
-      	
-    // Create and draw the visualization.
-    new google.visualization.AreaChart(document.getElementById('direxp_visualization')).
-    	draw(data, {colors: ['#FF89C6', '#A1B449', '#68DBF6', '#038722', '#A66B07'],
-            		title: 'Total Dire Experience',
-        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
-        			curveType: 'function',
-        			isStacked: true,
-        			series: {
-			            0: { lineWidth: 2 },
-			            1: { lineWidth: 2 },
-			            2: { lineWidth: 2 },
-			            3: { lineWidth: 2 },
-			            4: { lineWidth: 2 }
-          },
-}
-        );
-      }
-
-     google.setOnLoadCallback(drawVisualization);
-</script>
-,
+	     google.setOnLoadCallback(drawVisualization);
+	</script>
+{% else %}
+	<p>Match not found!</p>
+{% endif %}

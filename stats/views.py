@@ -172,7 +172,7 @@ def HeroDetail(request, account_id, hero_id):
         
     
 class MatchDetail(generic.ListView):
-    template_name = 'stats/match3.html'
+    template_name = 'stats/match.html'
     context_object_name = 'match' 
     
     def get_queryset(self):
@@ -227,18 +227,40 @@ class MatchDetail(generic.ListView):
         coordinates = []
         i = 0
         player_info_list = modules.updatePlayerInfo(acc_ids)
-        radiant_totals = MatchPlayers(account_id = '4294967295', level = 1, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
-        dire_totals = MatchPlayers(account_id = '4294967295', level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
+        radiant_totals = MatchPlayers(level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
+        dire_totals = MatchPlayers(level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
         hero_list = []
         for p in players:
             if i < 5:
                 p.radiant = True
-                print(str(radiant_totals.level) + '  ' + str(p.level))
-                radiant_totals.level += p.level                
+                radiant_totals.level += p.level
+                radiant_totals.kills += p.kills
+                radiant_totals.deaths += p.deaths
+                radiant_totals.assists += p.assists
+                radiant_totals.last_hits += p.last_hits
+                radiant_totals.denies += p.denies
+                radiant_totals.gold_per_min += p.gold_per_min
+                radiant_totals.xp_per_min += p.xp_per_min
+                radiant_totals.hero_damage += p.hero_damage
+                radiant_totals.hero_healing += p.hero_healing
+                radiant_totals.tower_damage += p.tower_damage
+                radiant_totals.radiant = True
+                radiant_totals.personaname = 'Totals'
             else:
                 p.radiant = False
-                print(str(dire_totals.level) + '  ' + str(p.level))
                 dire_totals.level += p.level
+                dire_totals.kills += p.kills
+                dire_totals.deaths += p.deaths
+                dire_totals.assists += p.assists
+                dire_totals.last_hits += p.last_hits
+                dire_totals.denies += p.denies
+                dire_totals.gold_per_min += p.gold_per_min
+                dire_totals.xp_per_min += p.xp_per_min
+                dire_totals.hero_damage += p.hero_damage
+                dire_totals.hero_healing += p.hero_healing
+                dire_totals.tower_damage += p.tower_damage
+                dire_totals.radiant = False
+                dire_totals.personaname = 'Totals'
 
             h = [h for h in heroes if h.hero_id == p.hero_id]
             if h:
@@ -331,7 +353,7 @@ class MatchDetail(generic.ListView):
                 p.country = None
                 p.flag = None
 
-        players.append(radiant_totals)
+        players.insert(5, radiant_totals)
         players.append(dire_totals)
         #hero_list.append('Total XP Diff')
         allplayersxp = MatchPlayers.objects.getAllPlayersXPByMatch(match_id)

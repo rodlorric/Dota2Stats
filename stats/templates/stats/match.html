@@ -90,8 +90,10 @@
 			          		{% endif %}
 		          		</ul>
 		          	</td>
-		          	<td class="centerText">		    
-		            	<i class="hero_sprite {{player.hero_name}}"></i>
+		          	<td class="centerText">
+		          		{% if player.hero_name %}    
+		            		<i class="hero_sprite {{player.hero_name}}"></i>
+		            	{% endif %}
 		          	</td>
 		          	<td class="centerText">
 		            	{{player.level}}

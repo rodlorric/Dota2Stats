@@ -153,7 +153,7 @@ COUNTRY_INFO = 'http://api.geonames.org/searchJSON?country=%s&name=%s&maxRows=1&
 
 FLAG_URL = 'http://cdn.steamcommunity.com/public/images/countryflags/%s.gif'
 
-GMAPS_URL = 'http://maps.google.com/maps/api/staticmap?size=640x480&sensor=false&visible=0,0&'
+GMAPS_URL = 'http://maps.google.com/maps/api/staticmap?size=640x480&key=AIzaSyB0MIjWkYm3KpDfNCUFI1_CeuhUym7BjaQ&sensor=false&visible=0,0&'
 
 HERO_URL = 'http://www.dota2.com/hero/%s/'
 

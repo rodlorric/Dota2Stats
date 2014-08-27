@@ -488,7 +488,6 @@ class WinrateView(generic.ListView):
 
         ids = [None, None, None, None, None]
         error = ''
-        print('len ' + str(len(account_ids)))
         if len(account_ids) > 5:
             account_ids = account_ids[:4]
         
@@ -504,21 +503,41 @@ class WinrateView(generic.ListView):
                 personaname += 'Anonymous '
             i += 1
 
-        wr_data = [['x', 'Winrate (%)']]
+        wr_data = [['Matches', 'Winrate (%)']]
         winrate = list(MatchPlayers.objects.getWinrate(ids[0], num_matches, ids[1], ids[2], ids[3], ids[4]))
+        l_streak = 0
+        w_streak = 0
+        total_matches = 0
 
         if len(winrate) > 0:
-            for (match_id, win_rate, wins, loses, total_matches) in winrate:
+            tmp_wins = 0
+            tmp_loses = 0
+            accum_wins = 0
+            accum_lose = 0
+            
+            for (match_id, win_rate, wins, loses, t_matches) in winrate:
                 wr_data.append([str(match_id), float(win_rate)])
-            (m, w, ww, l, total_matches) = winrate[len(winrate)-1]
+                if tmp_wins == wins and wins != 0:
+                    accum_lose += 1
+                    accum_wins = 0
+                    if accum_lose > l_streak:
+                        l_streak = accum_lose
+                if tmp_loses == loses and loses != 0:
+                    accum_wins += 1
+                    accum_lose = 0
+                    if accum_wins > w_streak:
+                        w_streak  = accum_wins
+                tmp_wins = wins
+                tmp_loses = loses
+                total_matches = t_matches
         else:
             total_matches = 0
             wr_data.append([0 , 0])
             error = 'There are no matches with those players...'
 
         player_data = {'plot_data' : wr_data,
-                        'win_streak' : '0',
-                        'lose_streak' : '0',
+                        'win_streak' : w_streak,
+                        'lose_streak' : l_streak,
                         'personaname' : personaname,
                         'account_id' : ids[0],
                         'total_matches' : total_matches,
@@ -529,7 +548,7 @@ def getPlayer(request):
     account_id = request.POST['account_id']
     if account_id:
         player_info = modules.updatePlayerInfo([account_id])[0]
-        account_id = modules.getSteamID32bit(int(player_info.steamid))
+        account_id = player_info.account_id
     return HttpResponseRedirect(reverse('player:matchesxplayer', args=(account_id,)))
 
 

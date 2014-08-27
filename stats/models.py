@@ -64,6 +64,17 @@ class Incidencias(models.Model):
         managed = False
         db_table = 'Incidencias'
 
+class MatchesManager(models.Manager):
+    def getXPByMatch(self, match_id):
+        cursor = connection.cursor()
+        result_set = None
+        try:
+            cursor.callproc("GetDifferenceExperienceByMatch", [match_id])
+            result_set = cursor.fetchall()
+        finally:
+            cursor.close()
+        return result_set
+
 class Matches(models.Model):
     radiant_win = models.NullBooleanField()
     duration = models.IntegerField(blank=True, null=True)
@@ -99,19 +110,36 @@ class Matches(models.Model):
     radiant_guild_id = models.IntegerField(blank=True, null=True)
     radiant_guild_name = models.CharField(max_length=100, blank=True)
     radiant_guild_logo = models.BigIntegerField(blank=True, null=True)
+    objects = MatchesManager()
     class Meta:
         managed = False
         db_table = 'Matches'
 
-    def getXp(self, match_id):
+    
+
+class MatchPlayersManager(models.Manager):
+    def getAllPlayersXPByMatch(self, match_id):
         cursor = connection.cursor()
         result_set = None
         try:
-            cursor.callproc("GetDifferenceExperienceByMatch", [match_id])
+            cursor.callproc("GetDifferenceExperienceByMatchAllPlayers", [match_id])
             result_set = cursor.fetchall()
         finally:
             cursor.close()
         return result_set
+
+    def getWinrate(self, account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4):
+        cursor = connection.cursor()
+        result_set = None
+        try:
+            print(num_matches)
+            print(account_id)
+            cursor.callproc("GetWinRate", [account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4])
+            result_set = cursor.fetchall()
+        finally:
+            cursor.close()
+        return result_set
+
 
 class MatchPlayers(models.Model):
     match = models.ForeignKey('Matches', primary_key=True)
@@ -137,10 +165,15 @@ class MatchPlayers(models.Model):
     hero_damage = models.IntegerField(blank=True, null=True)
     tower_damage = models.DecimalField(max_digits=18, decimal_places=0, blank=True, null=True)
     hero_healing = models.DecimalField(max_digits=18, decimal_places=0, blank=True, null=True)
-    level = models.IntegerField(blank=True, null=True)
+    level = models.IntegerField(blank=True, null=True)    
+    objects = MatchPlayersManager()
+
     class Meta:
         managed = False
         db_table = 'Match_Players'
+
+
+
 
 class AdditionalUnits(models.Model):
     match = models.ForeignKey('MatchPlayers')

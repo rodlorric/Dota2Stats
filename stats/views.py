@@ -189,6 +189,7 @@ class MatchDetail(generic.ListView):
         match.cluster = next((c['name'] for c in cluster_list if c['id'] == match.cluster), None)
         match.lobby_type = next((l['name'] for l in lobby_list if l['id'] == match.lobby_type), None)
         match.game_mode = next((l['name'] for l in type_list if l['id'] == match.game_mode), None)
+        match.duration = datetime.timedelta(seconds=match.duration)
         new_xp = [['time','xp']]
         xp = Matches.objects.getXPByMatch(match_id)
         for (time,x) in xp:
@@ -337,8 +338,6 @@ class MatchDetail(generic.ListView):
         direxp = [direxp]
         matchxp = [['Time','XP Diff']]
 
-        print(radxp)
-        print(direxp)
         for (time, rad0, rad1, rad2, rad3, rad4, dir128, dir129, dir130, dir131, dir132, xp) in allplayersxp:
             matchxp.append([str(datetime.timedelta(seconds=time)), xp])
             radxp.append([str(datetime.timedelta(seconds=time)), rad0, rad1, rad2, rad3, rad4])
@@ -385,7 +384,6 @@ class HeroesList(generic.ListView):
 
         end = time.time()
         total_time = end - start
-        print('total time: %s') %str(total_time)
         return heroes
 
 class CountriesList(generic.ListView):

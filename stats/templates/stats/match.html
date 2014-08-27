@@ -157,11 +157,13 @@
 <p>
 
 <div id="xp_visualization" style="width:1024; height:1024px"/>
+
 <!--Load the AJAX API-->
 <script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
 <script type="text/javascript">
     google.load('visualization', '1', {packages: ['corechart']});
 </script>
+<!--
 <script type="text/javascript">
 	function drawVisualization() {
     // Create and populate the data table.
@@ -175,9 +177,85 @@
         			chartArea :{left:120,top:50,width:'75%',height:'50%'},
         			curveType: 'function'}
         );
-      }     
+      }
+
+     google.setOnLoadCallback(drawVisualization);
+</script>
+-->
+<div id="allxp_visualization" style="width:1024; height:600px"></div>
+<p></p>
+<div id="radxp_visualization" style="width:1024; height:600px"></div>
+<p></p>
+<div id="direxp_visualization" style="width:1024; height:600px"></div>
+<p></p>
+<script type="text/javascript">
+	function drawVisualization() {
+    // Create and populate the data table.
+    var data_from_db = {{matchxp|safe}}
+    var data = google.visualization.arrayToDataTable(data_from_db);
+      	
+    // Create and draw the visualization.
+    new google.visualization.AreaChart(document.getElementById('allxp_visualization')).
+    	draw(data, {colors: ['green'],
+            		title: 'Match Experience Difference',
+        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
+}
+        );
+      }
 
      google.setOnLoadCallback(drawVisualization);
 </script>
 
+<script type="text/javascript">
+	function drawVisualization() {
+    // Create and populate the data table.
+    var data_from_db = {{radxp|safe}}
+    var data = google.visualization.arrayToDataTable(data_from_db);
+      	
+    // Create and draw the visualization.
+    new google.visualization.AreaChart(document.getElementById('radxp_visualization')).
+    	draw(data, {colors: ['#3D78F8', '#76FBC2', '#C501BA', '#EDEF1F', '#FC6B00'],
+            		title: 'Total Radiant Experience',
+        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
+        			curveType: 'function',
+        			isStacked: true,
+        			series: {
+			            0: { lineWidth: 2 },
+			            1: { lineWidth: 2 },
+			            2: { lineWidth: 2 },
+			            3: { lineWidth: 2 },
+			            4: { lineWidth: 2 }
+          },
+}
+        );
+      }
 
+     google.setOnLoadCallback(drawVisualization);
+</script>
+<script type="text/javascript">
+	function drawVisualization() {
+    // Create and populate the data table.
+    var data_from_db = {{direxp|safe}}
+    var data = google.visualization.arrayToDataTable(data_from_db);
+      	
+    // Create and draw the visualization.
+    new google.visualization.AreaChart(document.getElementById('direxp_visualization')).
+    	draw(data, {colors: ['#FF89C6', '#A1B449', '#68DBF6', '#038722', '#A66B07'],
+            		title: 'Total Dire Experience',
+        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
+        			curveType: 'function',
+        			isStacked: true,
+        			series: {
+			            0: { lineWidth: 2 },
+			            1: { lineWidth: 2 },
+			            2: { lineWidth: 2 },
+			            3: { lineWidth: 2 },
+			            4: { lineWidth: 2 }
+          },
+}
+        );
+      }
+
+     google.setOnLoadCallback(drawVisualization);
+</script>
+,

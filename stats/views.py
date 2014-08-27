@@ -487,6 +487,7 @@ class WinrateView(generic.ListView):
         account_ids = account_id.split(',')
 
         ids = [None, None, None, None, None]
+        error = ''
         print('len ' + str(len(account_ids)))
         if len(account_ids) > 5:
             account_ids = account_ids[:4]
@@ -514,7 +515,7 @@ class WinrateView(generic.ListView):
             total_matches = 0
             wr_data.append([0 , 0])
             error = 'There are no matches with those players...'
-            
+
         player_data = {'plot_data' : wr_data,
                         'win_streak' : '0',
                         'lose_streak' : '0',

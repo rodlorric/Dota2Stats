@@ -283,18 +283,12 @@ class MatchDetail(generic.ListView):
             p.abilities = p_ab_list
             i += 1
             
-            item = [item for item in items if item.item_id == p.item_0]
-            p.item_0_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
-            item = [item for item in items if item.item_id == p.item_1]
-            p.item_1_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
-            item = [item for item in items if item.item_id == p.item_2]
-            p.item_2_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
-            item = [item for item in items if item.item_id == p.item_3]
-            p.item_3_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
-            item = [item for item in items if item.item_id == p.item_4]
-            p.item_4_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
-            item = [item for item in items if item.item_id == p.item_5]
-            p.item_5_name = 'sprite-' + item[0].name.replace('item_','') + '_lg' if item else None
+            p.item_0_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_0), None)
+            p.item_1_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_1), None)
+            p.item_2_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_2), None)
+            p.item_3_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_3), None)
+            p.item_4_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_4), None)
+            p.item_5_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_5), None)
             
             pi = [pi for pi in player_info_list if str(pi.account_id) == str(p.account_id)]
             if pi:

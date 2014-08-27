@@ -172,7 +172,7 @@ def HeroDetail(request, account_id, hero_id):
         
     
 class MatchDetail(generic.ListView):
-    template_name = 'stats/match.html'
+    template_name = 'stats/match3.html'
     context_object_name = 'match' 
     
     def get_queryset(self):
@@ -201,7 +201,7 @@ class MatchDetail(generic.ListView):
     def get_context_data(self, **kwargs):
         match_id = self.kwargs['match_id']
         context = super(MatchDetail, self).get_context_data(**kwargs)
-        players = MatchPlayers.objects.filter(match_id = match_id).order_by('player_slot')
+        players = list(MatchPlayers.objects.filter(match_id = match_id).order_by('player_slot'))
         player_abilities = list(AbilityUpgrades.objects.filter(match_id = match_id))
 
         ab_set = [ab.ability for ab in player_abilities]
@@ -227,14 +227,18 @@ class MatchDetail(generic.ListView):
         coordinates = []
         i = 0
         player_info_list = modules.updatePlayerInfo(acc_ids)
-
+        radiant_totals = MatchPlayers(account_id = '4294967295', level = 1, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
+        dire_totals = MatchPlayers(account_id = '4294967295', level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
         hero_list = []
         for p in players:
-
             if i < 5:
                 p.radiant = True
+                print(str(radiant_totals.level) + '  ' + str(p.level))
+                radiant_totals.level += p.level                
             else:
                 p.radiant = False
+                print(str(dire_totals.level) + '  ' + str(p.level))
+                dire_totals.level += p.level
 
             h = [h for h in heroes if h.hero_id == p.hero_id]
             if h:
@@ -327,6 +331,8 @@ class MatchDetail(generic.ListView):
                 p.country = None
                 p.flag = None
 
+        players.append(radiant_totals)
+        players.append(dire_totals)
         #hero_list.append('Total XP Diff')
         allplayersxp = MatchPlayers.objects.getAllPlayersXPByMatch(match_id)
 

@@ -128,18 +128,18 @@ class MatchPlayersManager(models.Manager):
             cursor.close()
         return result_set
 
-    def getWinrate(self, account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4):
-        cursor = connection.cursor()
+    def getWinrate(self, account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4):        
         result_set = None
+        cursor = connection.cursor()
         try:
-            print(num_matches)
-            print(account_id)
-            cursor.callproc("GetWinRate", [account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4])
-            result_set = cursor.fetchall()
+            sp_params = [account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4]
+            cursor.callproc("GetWinRate", sp_params)
+            winrates = cursor.fetchall()
+            if cursor.nextset():
+                streaks = cursor.fetchone()
         finally:
             cursor.close()
-        return result_set
-
+        return (winrates, streaks)
 
 class MatchPlayers(models.Model):
     match = models.ForeignKey('Matches', primary_key=True)

@@ -50,8 +50,8 @@ class MatchesxPlayer(generic.ListView):
     def get_queryset(self):
         account_id = self.kwargs['account_id']
         heroes = Heroes.objects.all()
-        #modules.updatePlayerInfo([account_id])
-        #task = tasks.updatePlayer.delay(account_id)
+        #modules.update_player_info([account_id])
+        #task = tasks.update_player.delay(account_id)
         playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id').select_related('match')
         matches = []
         for matchxplayer in playermatches:
@@ -103,8 +103,8 @@ class HeroesxPlayer(generic.ListView):
     def get_queryset(self):
         account_id = self.kwargs['account_id']
         heroes = Heroes.objects.all()
-        #modules.updatePlayer(account_id)
-        #task = tasks.updatePlayer.delay(account_id)        
+        #modules.update_player(account_id)
+        #task = tasks.update_player.delay(account_id)        
         
         h_list = []
         #hero_var = heroes.JSON['heroes']
@@ -141,7 +141,7 @@ class HeroesxPlayer(generic.ListView):
                 continue   
         return sorted(h_list, key=lambda k: k.matches, reverse = True)
     
-def HeroDetail(request, account_id, hero_id):
+def hero_detail(request, account_id, hero_id):
     heroes = Heroes.objects.all()
     if account_id and hero_id:
         matchesxplayer = MatchPlayers.objects.filter(Q(account_id = account_id), Q(hero_id = hero_id)).order_by('-match__match_id').select_related('match')
@@ -180,7 +180,7 @@ class MatchDetail(generic.ListView):
         try:
             match = Matches.objects.get(match_id = match_id)
         except Matches.DoesNotExist:
-            #match = modules.saveMatch(self.kwargs['match_id'])
+            #match = modules.save_match(self.kwargs['match_id'])
             print('Do not save match yet!')
 
         cluster_list = clusters_json.JSON['regions']
@@ -191,8 +191,8 @@ class MatchDetail(generic.ListView):
         match.game_mode = next((l['name'] for l in type_list if l['id'] == match.game_mode), None)
         match.duration = datetime.timedelta(seconds=match.duration)
         new_xp = [['time','xp']]
-        xp = Matches.objects.getXPByMatch(match_id)
-        for (time,x) in xp:
+        xp = Matches.objects.get_xp_by_match(match_id)
+        for time,x in xp:
             new_xp.append([str(datetime.timedelta(seconds=time)), x])
         match.xp = new_xp
 
@@ -226,7 +226,7 @@ class MatchDetail(generic.ListView):
 
         coordinates = []
         i = 0
-        player_info_list = modules.updatePlayerInfo(acc_ids)
+        player_info_list = modules.update_player_info(acc_ids)
         radiant_totals = MatchPlayers(level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
         dire_totals = MatchPlayers(level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
         hero_list = []
@@ -326,7 +326,7 @@ class MatchDetail(generic.ListView):
             players.insert(5, radiant_totals)
             players.append(dire_totals)
             #hero_list.append('Total XP Diff')
-            allplayersxp = MatchPlayers.objects.getAllPlayersXPByMatch(match_id)
+            allplayersxp = MatchPlayers.objects.get_all_players_xp_by_match(match_id)
 
             radxp = hero_list[:5]
             direxp = hero_list[5:]
@@ -336,7 +336,7 @@ class MatchDetail(generic.ListView):
             direxp = [direxp]
             matchxp = [['Time','XP Diff']]
 
-            for (time, rad0, rad1, rad2, rad3, rad4, dir128, dir129, dir130, dir131, dir132, xp) in allplayersxp:
+            for time, rad0, rad1, rad2, rad3, rad4, dir128, dir129, dir130, dir131, dir132, xp in allplayersxp:
                 matchxp.append([str(datetime.timedelta(seconds=time)), xp])
                 radxp.append([str(datetime.timedelta(seconds=time)), rad0, rad1, rad2, rad3, rad4])
                 direxp.append([str(datetime.timedelta(seconds=time)), dir128, dir129, dir130, dir131, dir132])
@@ -359,7 +359,7 @@ class HeroesList(generic.ListView):
         start = time.time()
         heroes = Heroes.objects.all()
         if not heroes:
-            heroes = modules.getHeroes()['result']['heroes']
+            heroes = modules.get_heroes()['result']['heroes']
             for h in heroes:
                 name = h['name'][14:]
                 hero_id = h.pop('id')
@@ -396,14 +396,14 @@ class CountriesList(generic.ListView):
                 c.countryCode_sprite = 'sprite-' + c.countryCode.lower()
             return countries
         else:
-            countries = modules.getCountries()
+            countries = modules.get_countries()
             if countries:
                 countries = countries['geonames']
             for c in countries:
                 c['flag_url'] = settings.FLAG_URL % c['countryCode'].lower()
                 if c['areaInSqKm'] == '':
                     c['areaInSqKm'] = 0.0
-                coords = modules.getCountryCoordinates(smart_str(c['countryCode']), smart_str(c['countryName']))['geonames'][0]
+                coords = modules.get_country_coordinates(smart_str(c['countryCode']), smart_str(c['countryName']))['geonames'][0]
                 c['latitude'] = coords['lat']
                 c['longitude'] = coords['lng']
                 country = Countries(**c)           
@@ -425,7 +425,7 @@ class AbilitiesList(generic.ListView):
             for a in abilities:
                 ability_img_url =  abilities_json.IMG_URL % a['name']
                 try:
-                    ability_img_uri = modules.stringifyImage(ability_img_url)
+                    ability_img_uri = modules.stringify_image(ability_img_url)
                 except:
                     ability_img_uri = None                    
                 ability = {
@@ -449,13 +449,13 @@ class ItemsList(generic.ListView):
                 i.name = i.name[5:]
             return items
         else:
-            items = modules.getItems()
+            items = modules.get_items()
             if items['result']:
                 items = items['result']['items']
             for i in items:
                 item_img_url = settings.ITEM_IMG_URL % i['name'].replace('item_','')
                 try:
-                    item_img_uri = modules.stringifyImage(item_img_url)
+                    item_img_uri = modules.stringify_image(item_img_url)
                 except:
                     item_img_uri = None
                 item = {
@@ -471,7 +471,7 @@ class ItemsList(generic.ListView):
                 item.save()
         return items
 
-def getWinratebynummatches(request, account_id):
+def get_winrate_by_nummatches(request, account_id):
     num_matches = request.POST['num_matches']
     return HttpResponseRedirect(reverse('player:winrate', args=(account_id, num_matches,)))
 
@@ -501,13 +501,13 @@ class WinrateView(generic.ListView):
             i += 1
 
         wr_data = [['Matches', 'Winrate (%)']]
-        (winrate, streaks) = MatchPlayers.objects.getWinrate(ids[0], num_matches, ids[1], ids[2], ids[3], ids[4])
+        (winrate, streaks) = MatchPlayers.objects.get_winrate(ids[0], num_matches, ids[1], ids[2], ids[3], ids[4])
         winrate = list(winrate)
         (w_streak, l_streak) = streaks
         total_matches = 0
 
         if len(winrate) > 0:            
-            for (match_id, win_rate, wins, loses, t_matches, ws, ls) in winrate:
+            for match_id, win_rate, wins, loses, t_matches in winrate:
                 wr_data.append([str(match_id), float(win_rate)])
                 total_matches = t_matches
         else:
@@ -524,10 +524,10 @@ class WinrateView(generic.ListView):
                         'error' : error}
         return player_data
 
-def getPlayer(request):
+def get_player(request):
     account_id = request.POST['account_id']
     if account_id:
-        player_info = modules.updatePlayerInfo([account_id])[0]
+        player_info = modules.update_player_info([account_id])[0]
         account_id = player_info.account_id
     return HttpResponseRedirect(reverse('player:matchesxplayer', args=(account_id,)))
 
@@ -535,7 +535,7 @@ def getPlayer(request):
 @login_required
 def done(request):
     uinfo = UserSocialAuth.objects.get(user = RequestContext(request)['user'])
-    account_id = modules.getSteamID32bit(uinfo.uid)
+    account_id = modules.get_steamid_32bit(uinfo.uid)
     return HttpResponseRedirect(reverse('player:matchesxplayer', args=(account_id,)))
 
 def logout(request):

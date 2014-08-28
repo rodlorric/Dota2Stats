@@ -65,7 +65,7 @@ class Incidencias(models.Model):
         db_table = 'Incidencias'
 
 class MatchesManager(models.Manager):
-    def getXPByMatch(self, match_id):
+    def get_xp_by_match(self, match_id):
         cursor = connection.cursor()
         result_set = None
         try:
@@ -118,7 +118,7 @@ class Matches(models.Model):
     
 
 class MatchPlayersManager(models.Manager):
-    def getAllPlayersXPByMatch(self, match_id):
+    def get_all_players_xp_by_match(self, match_id):
         cursor = connection.cursor()
         result_set = None
         try:
@@ -128,7 +128,7 @@ class MatchPlayersManager(models.Manager):
             cursor.close()
         return result_set
 
-    def getWinrate(self, account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4):        
+    def get_winrate(self, account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4):        
         result_set = None
         cursor = connection.cursor()
         try:
@@ -139,7 +139,7 @@ class MatchPlayersManager(models.Manager):
                 streaks = cursor.fetchone()
         finally:
             cursor.close()
-        return (winrates, streaks)
+        return winrates, streaks
 
 class MatchPlayers(models.Model):
     match = models.ForeignKey('Matches', primary_key=True)

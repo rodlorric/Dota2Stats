@@ -7,7 +7,7 @@
 	<a href="{% url 'socialauth_begin' 'steam' %}"><img alt="Login with Steam" src="http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png"/></a>
 {% endif %}
 
-<form action ="{% url 'player:getPlayer' %}" method="post">
+<form action ="{% url 'player:get_player' %}" method="post">
 {% csrf_token %}
 	<table>
 		<tr>

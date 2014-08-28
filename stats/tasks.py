@@ -15,8 +15,8 @@ def sleeptask(i):
 	return i
 
 @celery.task
-def updatePlayer(account_id):
-    #steamid = modules.getSteamID64bit(int(account_id))
+def update_player(account_id):
+    #steamid = modules.get_steamid_64bit(int(account_id))
     print('Updating player: ' + str(account_id))
     last_match_stored = None
     player = Player.objects.filter(account_id = account_id).order_by('-match_id')
@@ -25,8 +25,8 @@ def updatePlayer(account_id):
     else:
         last_match_stored = None
     matches = []
-    player_history  = modules.getMatchHistory(account_id, 100, None)
-    #player_history  = modules.getMatchHistory(account_id, 10, None)
+    player_history  = modules.get_match_history(account_id, 100, None)
+    #player_history  = modules.get_match_history(account_id, 10, None)
     if player_history and player_history['result']['status'] == 1:
         num_results = player_history['result']['num_results']
         total_results = player_history['result']['total_results']
@@ -37,7 +37,7 @@ def updatePlayer(account_id):
             last_match_id = matches[len(matches)-1]['match_id']-1
             if not any(m.get('match_id', None) == str(last_match_stored) for m in matches) and last_match_stored is not None:
                 break  
-            next_matches = modules.getMatchHistory(account_id, num_results, last_match_id)['result']['matches']            
+            next_matches = modules.get_match_history(account_id, num_results, last_match_id)['result']['matches']            
             matches += next_matches
             x += 1
         
@@ -47,5 +47,5 @@ def updatePlayer(account_id):
         try:
             Match.objects.get(match_id = match_id)
         except Match.DoesNotExist:
-            modules.saveMatch(match_id)
+            modules.save_match(match_id)
     return HttpResponseRedirect(reverse('player:matchesxplayer', args=(account_id,)))

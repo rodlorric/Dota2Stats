@@ -33,7 +33,7 @@
 
   <body>
     <a href="{% url 'player:matchesxplayer' playerdata.account_id %}">Go back to {{playerdata.personaname}}'s profile</a>    
-  	<form action ="{% url 'player:getWinratebynummatches' playerdata.account_id %}" method="post">
+  	<form action ="{% url 'player:get_winrate_by_nummatches' playerdata.account_id %}" method="post">
     <p>{{playerdata.error}}</p>
 		{% csrf_token %}
 		<table>

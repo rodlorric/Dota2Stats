@@ -182,7 +182,7 @@ class MatchDetail(generic.ListView):
         except Matches.DoesNotExist:
             #match = modules.saveMatch(self.kwargs['match_id'])
             print('Do not save match yet!')
-        
+
         cluster_list = clusters_json.JSON['regions']
         lobby_list = lobbies_json.JSON['lobbies']
         type_list = types_json.JSON['mods']
@@ -501,31 +501,14 @@ class WinrateView(generic.ListView):
             i += 1
 
         wr_data = [['Matches', 'Winrate (%)']]
-        winrate = list(MatchPlayers.objects.getWinrate(ids[0], num_matches, ids[1], ids[2], ids[3], ids[4]))
-        l_streak = 0
-        w_streak = 0
+        (winrate, streaks) = MatchPlayers.objects.getWinrate(ids[0], num_matches, ids[1], ids[2], ids[3], ids[4])
+        winrate = list(winrate)
+        (w_streak, l_streak) = streaks
         total_matches = 0
 
-        if len(winrate) > 0:
-            tmp_wins = 0
-            tmp_loses = 0
-            accum_wins = 0
-            accum_lose = 0
-            
-            for (match_id, win_rate, wins, loses, t_matches) in winrate:
+        if len(winrate) > 0:            
+            for (match_id, win_rate, wins, loses, t_matches, ws, ls) in winrate:
                 wr_data.append([str(match_id), float(win_rate)])
-                if tmp_wins == wins and wins != 0:
-                    accum_lose += 1
-                    accum_wins = 0
-                    if accum_lose > l_streak:
-                        l_streak = accum_lose
-                if tmp_loses == loses and loses != 0:
-                    accum_wins += 1
-                    accum_lose = 0
-                    if accum_wins > w_streak:
-                        w_streak  = accum_wins
-                tmp_wins = wins
-                tmp_loses = loses
                 total_matches = t_matches
         else:
             total_matches = 0

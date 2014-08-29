@@ -4,7 +4,11 @@
 <head>
 	<link rel="shortcut icon" href="http://media.steampowered.com/apps/dota2/images/favicon.ico" />
 	<link type="text/css" rel="stylesheet" href="{% static 'stats/style.css' %}" />
-	<title>Dota 2 Stats :: {{playerdata.personaname}} Winrate </title>
+	<title>Dota 2 Stats :: {% for player in playerdata.players %}
+                            {% if player != None %}
+                              {{player}} -
+                            {% endif %}
+                          {% endfor %} Winrate </title>
     <!--Load the AJAX API-->
     <script type="text/javascript" src="//www.google.com/jsapi"></script>
     <script type="text/javascript">
@@ -32,7 +36,7 @@
   </head>
 
   <body>
-    <a href="{% url 'player:matchesxplayer' playerdata.account_id %}">Go back to {{playerdata.personaname}}'s profile</a>    
+    <a href="{% url 'player:matchesxplayer' playerdata.account_id %}">Go back to {{playerdata.player_profile}}'s profile</a>
   	<form action ="{% url 'player:get_winrate_by_nummatches' playerdata.account_id %}" method="post">
     <p>{{playerdata.error}}</p>
 		{% csrf_token %}
@@ -50,6 +54,13 @@
 	        </tr>
 	    </table>
 	</form>
+    <br><p>{% for player in playerdata.players %}
+              {% if player != None %}
+                {{player}}, 
+              {% endif %}
+            {% endfor %}
+            combined win rate
+        </p>
     <br><p>Total Matches: {{playerdata.total_matches}} Win Streak:  {{playerdata.win_streak}} - Lose Streak: {{playerdata.lose_streak}}</p>
     <div id="winrate_visualization" style="width:1400px; height:400px"/>    
   </body>

@@ -481,35 +481,32 @@ class WinrateView(generic.ListView):
     
     def get_queryset(self):
         account_id = self.kwargs['account_id']
-        account_ids = account_id.split(',')
+        account_ids = account_id.split(',')[:5]
 
         ids = [None, None, None, None, None]
         error = ''
-        if len(account_ids) > 5:
-            account_ids = account_ids[:4]
         
         num_matches = self.kwargs['num_matches']
-        personaname = ''
+
+        #is slower :(
+        #ids = [account_ids[i] if i < len(account_ids) else None for i,x in enumerate(ids)]
         i = 0
         for aid in account_ids:
             ids[i] = aid
-            try:
-                pi = Accounts.objects.get(account_id = aid)
-                personaname += pi.personaname + ' '
-            except Accounts.DoesNotExist:
-                personaname += 'Anonymous '
             i += 1
 
-        wr_data = [['Matches', 'Winrate (%)']]
-        (winrate, streaks) = MatchPlayers.objects.get_winrate(ids[0], num_matches, ids[1], ids[2], ids[3], ids[4])
+        winrate, streaks = MatchPlayers.objects.get_winrate(ids[0], num_matches, ids[1], ids[2], ids[3], ids[4])
         winrate = list(winrate)
-        (w_streak, l_streak) = streaks
+        streaks = list(streaks)
+        w_streak = streaks.pop(0)
+        l_streak = streaks.pop(0)
         total_matches = 0
 
-        if len(winrate) > 0:            
-            for match_id, win_rate, wins, loses, t_matches in winrate:
-                wr_data.append([str(match_id), float(win_rate)])
-                total_matches = t_matches
+        #winrate[] = [0 match_id, 1 win_rate, 2 wins, 3 loses, 4 total_matches]
+        if len(winrate) > 0:
+            wr_data = [[str(values[0]), float(values[1])] for values in winrate]
+            wr_data.insert(0,['Matches', 'Winrate (%)'])
+            total_matches = winrate[len(winrate)-1][4]
         else:
             total_matches = 0
             wr_data.append([0 , 0])
@@ -518,7 +515,8 @@ class WinrateView(generic.ListView):
         player_data = {'plot_data' : wr_data,
                         'win_streak' : w_streak,
                         'lose_streak' : l_streak,
-                        'personaname' : personaname,
+                        'players' : streaks,
+                        'player_profile' : streaks[0],
                         'account_id' : ids[0],
                         'total_matches' : total_matches,
                         'error' : error}

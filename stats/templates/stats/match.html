@@ -17,7 +17,7 @@
 
 <h1>{{ match.match_id }}</h1>
 
-{% if players_list %}
+{% if match.players_list %}
     <a href="http://dotabuff.com/matches/{{match.match_id}}">Match on Dotabuff</a>
 	<table>
 		<tr>
@@ -75,14 +75,14 @@
 	        </tr>
 	    </thead>
         <tbody>
-		{% for player in players_list %}
+		{% for player in match.players_list %}
 		   	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if players.account_id != None and player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
 			    <td class="leftText">
 			    	<ul id="list">
 				    	{% if player.avatar %}
 				    		<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/></li>
 				    	{% else %}
-				    		<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{anon_img}}" title="{{player.personaname}}"/></li>
+				    		<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{match.anon_img}}" title="{{player.personaname}}"/></li>
 				    	{% endif %}
 			          	<li>{{player.personaname}}</li>
 			          	{% if player.country and player.flag %}
@@ -92,7 +92,7 @@
 		        </td>
 		        <td class="centerText">
 		        	{% if player.hero_name %}
-		            	<i class="hero_sprite {{player.hero_name}}"></i>
+		            	<i class="hero_sprite sprite-{{player.hero_name}}_sb"></i>
 		            {% endif %}
 		        </td>
 		        <td class="centerText">
@@ -130,19 +130,20 @@
 	          	</td>
 	          	<td>
 	            	<ul id="list">
-		            	{% if player.item_0 %}<li><i class="item_sprite {{player.item_0_name}}"></i></li>{% endif %}
-		            	{% if player.item_1 %}<li><i class="item_sprite {{player.item_1_name}}"></i></li>{% endif %}
-		            	{% if player.item_2 %}<li><i class="item_sprite {{player.item_2_name}}"></i></li>{% endif %}
-		            	{% if player.item_3 %}<li><i class="item_sprite {{player.item_3_name}}"></i></li>{% endif %}
-		            	{% if player.item_4 %}<li><i class="item_sprite {{player.item_4_name}}"></i></li>{% endif %}
-		            	{% if player.item_5 %}<li><i class="item_sprite {{player.item_5_name}}"></i></li>{% endif %}
+		            	{% if player.item_0_name %}<li><i class="item_sprite sprite-{{player.item_0_name}}_lg"></i></li>{% endif %}
+		            	{% if player.item_1_name %}<li><i class="item_sprite sprite-{{player.item_1_name}}_lg"></i></li>{% endif %}
+		            	{% if player.item_2_name %}<li><i class="item_sprite sprite-{{player.item_2_name}}_lg"></i></li>{% endif %}
+		            	{% if player.item_3_name %}<li><i class="item_sprite sprite-{{player.item_3_name}}_lg"></i></li>{% endif %}
+		            	{% if player.item_4_name %}<li><i class="item_sprite sprite-{{player.item_4_name}}_lg"></i></li>{% endif %}
+		            	{% if player.item_5_name %}<li><i class="item_sprite sprite-{{player.item_5_name}}_lg"></i></li>{% endif %}
 		            </ul>
 	          	</td>
 	          	<td>
 	          		<ul id="list">
 			        	{% for a in player.abilities %}
-				    		<li>
-				    			<i class="ability_sprite {{a.name}}"></i>
+				    		<li>{% if a != None %}
+				    			<i class="ability_sprite sprite-{{a}}_hp1"></i>
+				    			{% endif %}
 				    		<li>
 				    	{% endfor %}		        
 			    	</ul>
@@ -153,7 +154,7 @@
     </ul>
 	</table>
 		
-	<img src="{{gmap_img}}">
+	<img src="{{match.gmap_img}}">
 	<p></p>
 	<!--Load the AJAX API-->
 	<script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
@@ -169,7 +170,7 @@
 	<script type="text/javascript">
 		function drawVisualization() {
 	    // Create and populate the data table.
-	    var data_from_db = {{matchxp|safe}}
+	    var data_from_db = {{match.matchxp|safe}}
 	    var data = google.visualization.arrayToDataTable(data_from_db);
 	      	
 	    // Create and draw the visualization.
@@ -187,7 +188,7 @@
 	<script type="text/javascript">
 		function drawVisualization() {
 	    // Create and populate the data table.
-	    var data_from_db = {{radxp|safe}}
+	    var data_from_db = {{match.radxp|safe}}
 	    var data = google.visualization.arrayToDataTable(data_from_db);
 	      	
 	    // Create and draw the visualization.
@@ -213,7 +214,7 @@
 	<script type="text/javascript">
 		function drawVisualization() {
 	    // Create and populate the data table.
-	    var data_from_db = {{direxp|safe}}
+	    var data_from_db = {{match.direxp|safe}}
 	    var data = google.visualization.arrayToDataTable(data_from_db);
 	      	
 	    // Create and draw the visualization.

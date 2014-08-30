@@ -23,7 +23,6 @@ from social_auth.db.django_models import UserSocialAuth
 from django.shortcuts import render
 import tasks
 from operator import itemgetter
-import time
 
 class PlayersView(generic.ListView):
     template_name = 'stats/players.html'
@@ -173,65 +172,52 @@ def hero_detail(request, account_id, hero_id):
     
 class MatchDetail(generic.ListView):
     template_name = 'stats/match.html'
-    context_object_name = 'match' 
-    
+    context_object_name = 'match'
+
+
     def get_queryset(self):
+        import time
         match_id = self.kwargs['match_id']
-        try:
-            match = Matches.objects.get(match_id = match_id)
-        except Matches.DoesNotExist:
-            #match = modules.save_match(self.kwargs['match_id'])
-            print('Do not save match yet!')
+        start = time.time()
+        match_dict, players_dict = Matches.objects.get_match(match_id)
+        end = time.time()
+        total_time = end - start
+        print('1. Total time: ' + str(total_time))
 
-        cluster_list = clusters_json.JSON['regions']
-        lobby_list = lobbies_json.JSON['lobbies']
-        type_list = types_json.JSON['mods']
-        match.cluster = next((c['name'] for c in cluster_list if c['id'] == match.cluster), None)
-        match.lobby_type = next((l['name'] for l in lobby_list if l['id'] == match.lobby_type), None)
-        match.game_mode = next((l['name'] for l in type_list if l['id'] == match.game_mode), None)
-        match.duration = datetime.timedelta(seconds=match.duration)
-        new_xp = [['time','xp']]
-        xp = Matches.objects.get_xp_by_match(match_id)
-        for time,x in xp:
-            new_xp.append([str(datetime.timedelta(seconds=time)), x])
-        match.xp = new_xp
-
-        return match
-
-    def get_context_data(self, **kwargs):
-        match_id = self.kwargs['match_id']
-        context = super(MatchDetail, self).get_context_data(**kwargs)
-        players = list(MatchPlayers.objects.filter(match_id = match_id).order_by('player_slot'))
-        player_abilities = list(AbilityUpgrades.objects.filter(match_id = match_id))
-
-        ab_set = [ab.ability for ab in player_abilities]
-        abilities = list(Abilities.objects.filter(ability_id__in = ab_set))
-
-        hero_set = []
-        item_set = []
-        acc_ids = []
-        for p in players:
-            hero_set.append(p.hero_id)
-            item_set.append(p.item_0)
-            item_set.append(p.item_1)
-            item_set.append(p.item_2)
-            item_set.append(p.item_3)
-            item_set.append(p.item_4)
-            item_set.append(p.item_5)
-            acc_ids.append(p.account_id)
-
-        heroes = Heroes.objects.filter(hero_id__in = hero_set)
-        items = Items.objects.filter(item_id__in = item_set)
-        countries = Countries.objects.all()
-
-        coordinates = []
+        start = time.time()
+        match_dict = match_dict[0]
+        #match header
+        match = Matches(match_id = match_id)
+        match.cluster = match_dict['cluster_description']
+        match.lobby_type = match_dict['lobby_type_descripcion']
+        match.game_mode = match_dict['game_mode_descripcion']
+        match.duration = datetime.timedelta(seconds=match_dict['duration'])
+        match.start_time_datetime = match_dict['start_time_DateTime']
+        
+        #match details
         i = 0
-        player_info_list = modules.update_player_info(acc_ids)
         radiant_totals = MatchPlayers(level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
         dire_totals = MatchPlayers(level = 0, kills = 0, deaths = 0, assists = 0, last_hits = 0, denies = 0, gold_per_min = 0, xp_per_min = 0, hero_damage = 0, hero_healing = 0, tower_damage = 0)
         hero_list = []
-        for p in players:
-            if i < 5:
+        players = []
+        coordinates = []
+        total_time = end - start
+        print('2. Total time: ' + str(total_time))
+        start = time.time()
+        for player in players_dict:
+            p = MatchPlayers()
+            p.kills = player['kills']
+            p.deaths = player['deaths']
+            p.assists =player['assists']
+            p.last_hits = player['last_hits']
+            p.denies = player['denies']
+            p.gold_per_min = player['gold_per_min']
+            p.xp_per_min = player['xp_per_min']
+            p.hero_damage = player['hero_damage']
+            p.tower_damage = player['tower_damage']
+            p.hero_healing = player['hero_healing']
+            p.level = player['level']
+            if i < 5:                
                 p.radiant = True
                 radiant_totals.level += p.level
                 radiant_totals.kills += p.kills
@@ -262,72 +248,95 @@ class MatchDetail(generic.ListView):
                 dire_totals.radiant = False
                 dire_totals.personaname = 'Totals'
 
-            h = [h for h in heroes if h.hero_id == p.hero_id]
-            if h:
-                h = h[0]            
-                p.hero_id = h.hero_id
-                p.hero_img = h.small_horizontal_portrait
-                p.hero_localized_name = h.localized_name
-                p.hero_name = 'sprite-' + h.name.replace('npc_dota_hero_','') + '_sb'
-                hero_list.append(str(h.localized_name))
-
+            if 'hero_name' in player:                
+                h = Heroes(localized_name = player['localized_name'], name = player['hero_name'])                
             else:
-                h = Hero(name = 'Abandoned', localized_name = 'Abandoned' )
+                h = Heroes(name = 'Abandoned', localized_name = 'Abandoned' )
+            p.hero_localized_name = h.localized_name
+            p.hero_name = h.name.replace('npc_dota_hero_','')
+            hero_list.append(str(p.hero_localized_name))
 
-            p_ab_list = []
-            for pa in player_abilities:
-                if pa.player_slot_id == p.player_slot:
-                    ability = next((a for a in abilities if a.ability_id == pa.ability), None)
-                    pa.name = 'sprite-' + ability.name + '_hp1'
-                    p_ab_list.append(pa)
+
+            p_ab_list = []            
+            p_ab_list.append(player['ability_name1'])            
+            p_ab_list.append(player['ability_name2'])            
+            p_ab_list.append(player['ability_name3'])            
+            p_ab_list.append(player['ability_name4'])            
+            p_ab_list.append(player['ability_name5'])            
+            p_ab_list.append(player['ability_name6'])            
+            p_ab_list.append(player['ability_name7'])            
+            p_ab_list.append(player['ability_name8'])            
+            p_ab_list.append(player['ability_name9'])            
+            p_ab_list.append(player['ability_name10'])            
+            p_ab_list.append(player['ability_name11'])            
+            p_ab_list.append(player['ability_name12'])            
+            p_ab_list.append(player['ability_name13'])            
+            p_ab_list.append(player['ability_name14'])            
+            p_ab_list.append(player['ability_name15'])            
+            p_ab_list.append(player['ability_name16'])            
+            p_ab_list.append(player['ability_name17'])            
+            p_ab_list.append(player['ability_name18'])            
+            p_ab_list.append(player['ability_name19'])            
+            p_ab_list.append(player['ability_name20'])            
+            p_ab_list.append(player['ability_name21'])            
+            p_ab_list.append(player['ability_name22'])            
+            p_ab_list.append(player['ability_name23'])            
+            p_ab_list.append(player['ability_name24'])            
+            p_ab_list.append(player['ability_name25'])
             p.abilities = p_ab_list
-            i += 1
-            
-            p.item_0_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_0), None)
-            p.item_1_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_1), None)
-            p.item_2_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_2), None)
-            p.item_3_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_3), None)
-            p.item_4_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_4), None)
-            p.item_5_name = next(('sprite-' + item.name.replace('item_','') + '_lg' for item in items if item.item_id == p.item_5), None)
-            
-            pi = [pi for pi in player_info_list if str(pi.account_id) == str(p.account_id)]
-            if pi:
-                pi = pi[0]
-                p.personaname = pi.personaname
-                p.avatar = pi.avatar
-                c = [c for c in countries if c.countryCode == pi.loccountrycode]
-                if c:
-                #try:
-                    #c = Countries.objects.get(countryCode = pi.loccountrycode)
-                    c = c[0]
-                    p.country = c.countryName
-                    p.flag = 'sprite-' + c.countryCode.lower()
 
-                    country = steam_countries_json.countries.get(pi.loccountrycode)
+            
+            p.item_0_name = player['name_item0'].replace('item_','') if player['name_item0'] is not None else None
+            p.item_1_name = player['name_item1'].replace('item_','') if player['name_item1'] is not None else None
+            p.item_2_name = player['name_item2'].replace('item_','') if player['name_item2'] is not None else None
+            p.item_3_name = player['name_item3'].replace('item_','') if player['name_item3'] is not None else None
+            p.item_4_name = player['name_item4'].replace('item_','') if player['name_item4'] is not None else None
+            p.item_5_name = player['name_item5'].replace('item_','') if player['name_item5'] is not None else None
+
+            if player['personaname'] is not None:
+                p.personaname = player['personaname']
+                p.avatar = player['avatar']
+                if player['loccountrycode'] is not None:
+                    country = steam_countries_json.countries.get(player['loccountrycode'])
                     if country:
-                        state = country['states'].get(pi.locstatecode)
-                        if state:
-                            city = state['cities'].get(str(pi.loccityid))
-                            if city:
-                                coordinates.append(city['coordinates'])
+                        p.country = country['name']
+                        p.flag = 'sprite-' + player['loccountrycode'].lower()
+                        if player['locstatecode'] is not None:
+                            state = country['states'].get(player['locstatecode'])
+                            if state:
+                                if player['loccityid'] is not None:
+                                    city = state['cities'].get(str(player['loccityid']))
+                                    if city:
+                                        coordinates.append(city['coordinates'])
+                                    else:
+                                        coordinates.append(state['coordinates'])
                             else:
-                                coordinates.append(state['coordinates'])
-                        else:
-                            coordinates.append(country['coordinates'])
-                #except Countries.DoesNotExist:
+                                coordinates.append(country['coordinates'])
                 else:
                     p.country = None
                     p.flag = None
             else:
                 p.personaname = 'Anonymous'
+                p.avatar = None
                 p.country = None
                 p.flag = None
+
+            p.account_id = player['account_id']
+            p.player_slot = player['player_slot']
+            p.hero_id = player['hero_name']
+            players.append(p)
+            i += 1
+        end = time.time()
+        total_time = end - start
+        print('3. Total time: ' + str(total_time))
         if players:
             players.insert(5, radiant_totals)
             players.append(dire_totals)
-            #hero_list.append('Total XP Diff')
-            allplayersxp = MatchPlayers.objects.get_all_players_xp_by_match(match_id)
-
+            start = time.time()
+            allplayersxp = Matches.objects.get_all_players_xp_by_match(match_id)
+            end = time.time()
+            total_time = end - start
+            print('4. Total time: ' + str(total_time))
             radxp = hero_list[:5]
             direxp = hero_list[5:]
             radxp.insert(0, 'Time')
@@ -339,17 +348,16 @@ class MatchDetail(generic.ListView):
             for time, rad0, rad1, rad2, rad3, rad4, dir128, dir129, dir130, dir131, dir132, xp in allplayersxp:
                 matchxp.append([str(datetime.timedelta(seconds=time)), xp])
                 radxp.append([str(datetime.timedelta(seconds=time)), rad0, rad1, rad2, rad3, rad4])
-                direxp.append([str(datetime.timedelta(seconds=time)), dir128, dir129, dir130, dir131, dir132])
-            context['matchxp'] = matchxp
-            context['radxp'] = radxp
-            context['direxp'] = direxp
+                direxp.append([str(datetime.timedelta(seconds=time)), dir128, dir129, dir130, dir131, dir132])            
 
-            context['players_list'] = players
-            context['invalid_account_ids'] = settings.INVALID_ACCOUNT_IDS
-            context['gmap_img'] = modules.gmap_img(coordinates)
-            context['anon_img'] = settings.PLAYER_ANON_AVATAR
-
-        return context
+            match.matchxp = matchxp
+            match.radxp = radxp
+            match.direxp = direxp
+            match.players_list = players
+            match.invalid_account_ids = settings.INVALID_ACCOUNT_IDS
+            match.gmap_img = modules.gmap_img(coordinates)
+            match.anon_img = settings.PLAYER_ANON_AVATAR
+        return match
     
 class HeroesList(generic.ListView):
     template_name = 'stats/heroes.html'

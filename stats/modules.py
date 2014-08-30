@@ -46,6 +46,14 @@ def get_items():
     url = settings.STEAM_BASE_URL + 'IEconDOTA2_570/GetGameItems/v0001/?key=' + settings.STEAM_API_KEY
     return web_api_call(url)
 
+def get_live_league_games():
+    url = settings.STEAM_BASE_URL + 'IDOTA2Match_570/GetLiveLeagueGames/v0001/?key=' + settings.STEAM_API_KEY
+    return web_api_call(url)
+
+def get_team_info_by_teamid(start_at_team_id, teams_requested):
+    url = settings.STEAM_BASE_URL + 'IDOTA2Match_570/GetTeamInfoByTeamID/v001/?key=' + settings.STEAM_API_KEY + '&start_at_team_id=' +str(start_at_team_id) + '&teams_requested=' + str(teams_requested)
+    return web_api_call(url)
+
 def get_countries():
     url = settings.COUNTRIES_URL
     return web_api_call(url)
@@ -82,7 +90,6 @@ def resolve_steamid(account_id):
                     account_id = 76561202255233023
     else:
         account_id = 76561202255233023
-    print('account_id: ' + str(account_id))
     player = Accounts(account_id = account_id)
     return player
 

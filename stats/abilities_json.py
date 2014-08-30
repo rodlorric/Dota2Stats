@@ -1995,11 +1995,11 @@ JSON = {
         },
         {
             "name": "wisp_spirits_in",
-            "id": "-1"
+            "id": "5490"
         },
         {
             "name": "wisp_spirits_out",
-            "id": "-1"
+            "id": "5493"
         },
         {
             "name": "bristleback_viscous_nasal_goo",

@@ -12,6 +12,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.db import connection
 
+
 class Accounts(models.Model):
     account_id = models.BigIntegerField(primary_key=True)
     communityvisibilitystate = models.SmallIntegerField(blank=True, null=True)
@@ -65,6 +66,21 @@ class Incidencias(models.Model):
         db_table = 'Incidencias'
 
 class MatchesManager(models.Manager):
+    def get_all_players_xp_by_match(self, match_id):
+        import time
+        start = time.time()
+        cursor = connection.cursor()
+        result_set = None
+        try:
+            cursor.callproc("GetDifferenceExperienceByMatchAllPlayers", [match_id])
+            result_set = cursor.fetchall()
+        finally:
+            cursor.close()
+        end = time.time()
+        total_time = end - start
+        print('get_all_players_xp_by_match. Total time: ' + str(total_time))
+        return result_set
+
     def get_xp_by_match(self, match_id):
         cursor = connection.cursor()
         result_set = None
@@ -74,6 +90,23 @@ class MatchesManager(models.Manager):
         finally:
             cursor.close()
         return result_set
+
+    def get_match(self, match_id):
+        import time
+        start = time.time()
+        cursor = connection.cursor()
+        result_set = None
+        try:
+            cursor.callproc("GetMatch", [match_id])
+            match_dict = result_set_to_dict(cursor)
+            if cursor.nextset():
+                players_dict = result_set_to_dict(cursor)
+        finally:
+            cursor.close()
+        end = time.time()
+        total_time = end - start
+        print('get_match. Total time: ' + str(total_time))
+        return match_dict, players_dict
 
 class Matches(models.Model):
     radiant_win = models.NullBooleanField()
@@ -118,16 +151,6 @@ class Matches(models.Model):
     
 
 class MatchPlayersManager(models.Manager):
-    def get_all_players_xp_by_match(self, match_id):
-        cursor = connection.cursor()
-        result_set = None
-        try:
-            cursor.callproc("GetDifferenceExperienceByMatchAllPlayers", [match_id])
-            result_set = cursor.fetchall()
-        finally:
-            cursor.close()
-        return result_set
-
     def get_winrate(self, account_id, num_matches, account_friend_id1, account_friend_id2, account_friend_id3, account_friend_id4):        
         result_set = None
         cursor = connection.cursor()
@@ -264,3 +287,17 @@ class Abilities(models.Model):
     def __unicode__(self):
         return self.name
 
+#credit to http://geert.vanderkelen.org/fetching-rows-as-dictionaries-with-mysql-connectorpython/
+def result_set_to_dict(cursor):
+    import time
+    start = time.time()
+    result = []
+    description = cursor.description
+    rows = cursor.fetchall()
+    columns = tuple( [d[0].decode('utf8') for d in description] )
+    for row in rows:
+        result.append(dict(zip(columns, row)))
+    end = time.time()
+    total_time = end - start
+    print('result_set_to_dict. Total time: ' + str(total_time))
+    return result

@@ -178,7 +178,7 @@ class MatchDetail(generic.ListView):
     def get_queryset(self):
         import time
         match_id = self.kwargs['match_id']
-        match_dict, players_dict = Matches.objects.get_match(match_id)
+        match_dict, players_dict, allplayersxp = Matches.objects.get_match(match_id)
 
         match_dict = match_dict[0]
         #match header
@@ -322,7 +322,6 @@ class MatchDetail(generic.ListView):
         if players:
             players.insert(5, radiant_totals)
             players.append(dire_totals)
-            allplayersxp = Matches.objects.get_all_players_xp_by_match(match_id)
             radxp = hero_list[:5]
             direxp = hero_list[5:]
             radxp.insert(0, 'Time')

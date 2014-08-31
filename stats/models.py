@@ -67,8 +67,6 @@ class Incidencias(models.Model):
 
 class MatchesManager(models.Manager):
     def get_all_players_xp_by_match(self, match_id):
-        import time
-        start = time.time()
         cursor = connection.cursor()
         result_set = None
         try:
@@ -76,9 +74,6 @@ class MatchesManager(models.Manager):
             result_set = cursor.fetchall()
         finally:
             cursor.close()
-        end = time.time()
-        total_time = end - start
-        print('get_all_players_xp_by_match. Total time: ' + str(total_time))
         return result_set
 
     def get_xp_by_match(self, match_id):
@@ -92,8 +87,6 @@ class MatchesManager(models.Manager):
         return result_set
 
     def get_match(self, match_id):
-        import time
-        start = time.time()
         cursor = connection.cursor()
         result_set = None
         try:
@@ -101,12 +94,11 @@ class MatchesManager(models.Manager):
             match_dict = result_set_to_dict(cursor)
             if cursor.nextset():
                 players_dict = result_set_to_dict(cursor)
+            if cursor.nextset():
+                match_experience = cursor.fetchall()
         finally:
             cursor.close()
-        end = time.time()
-        total_time = end - start
-        print('get_match. Total time: ' + str(total_time))
-        return match_dict, players_dict
+        return match_dict, players_dict, match_experience
 
 class Matches(models.Model):
     radiant_win = models.NullBooleanField()
@@ -289,15 +281,10 @@ class Abilities(models.Model):
 
 #credit to http://geert.vanderkelen.org/fetching-rows-as-dictionaries-with-mysql-connectorpython/
 def result_set_to_dict(cursor):
-    import time
-    start = time.time()
     result = []
     description = cursor.description
     rows = cursor.fetchall()
     columns = tuple( [d[0].decode('utf8') for d in description] )
     for row in rows:
         result.append(dict(zip(columns, row)))
-    end = time.time()
-    total_time = end - start
-    print('result_set_to_dict. Total time: ' + str(total_time))
     return result

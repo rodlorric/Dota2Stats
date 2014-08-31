@@ -178,13 +178,8 @@ class MatchDetail(generic.ListView):
     def get_queryset(self):
         import time
         match_id = self.kwargs['match_id']
-        start = time.time()
         match_dict, players_dict = Matches.objects.get_match(match_id)
-        end = time.time()
-        total_time = end - start
-        print('1. Total time: ' + str(total_time))
 
-        start = time.time()
         match_dict = match_dict[0]
         #match header
         match = Matches(match_id = match_id)
@@ -201,9 +196,6 @@ class MatchDetail(generic.ListView):
         hero_list = []
         players = []
         coordinates = []
-        total_time = end - start
-        print('2. Total time: ' + str(total_time))
-        start = time.time()
         for player in players_dict:
             p = MatchPlayers()
             p.kills = player['kills']
@@ -326,17 +318,11 @@ class MatchDetail(generic.ListView):
             p.hero_id = player['hero_name']
             players.append(p)
             i += 1
-        end = time.time()
-        total_time = end - start
-        print('3. Total time: ' + str(total_time))
+
         if players:
             players.insert(5, radiant_totals)
             players.append(dire_totals)
-            start = time.time()
             allplayersxp = Matches.objects.get_all_players_xp_by_match(match_id)
-            end = time.time()
-            total_time = end - start
-            print('4. Total time: ' + str(total_time))
             radxp = hero_list[:5]
             direxp = hero_list[5:]
             radxp.insert(0, 'Time')
@@ -364,7 +350,6 @@ class HeroesList(generic.ListView):
     context_object_name = 'heroes_list'
     
     def get_queryset(self):
-        start = time.time()
         heroes = Heroes.objects.all()
         if not heroes:
             heroes = modules.get_heroes()['result']['heroes']
@@ -389,8 +374,6 @@ class HeroesList(generic.ListView):
         for h in heroes:
             h.name = 'sprite-' + h.name[14:] + '_sb'
 
-        end = time.time()
-        total_time = end - start
         return heroes
 
 class CountriesList(generic.ListView):

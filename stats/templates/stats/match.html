@@ -43,7 +43,7 @@
             	{{match.game_mode}}
           	</td>
           	<td class="centerText">
-          	{% if match.radiant_win == True %}
+          	{% if match.radiant_win %}
             	Radiant
             {% else %}
             	Dire
@@ -191,9 +191,17 @@ $(function () {
             series: [{
                 name: 'Difference',
                 data: {{match.matchxp}},
-                color: '#43804B',
-            	negativeColor: '#7F4933'
-            }]
+                color: '#99CD32',
+            	negativeColor: '#FF3F0F'
+            }],
+	            plotOptions: {
+	                area: {
+	                    marker: {
+	                    	enabled : false,
+	                        lineWidth: 1,
+	                    }
+	                }
+	            }
         });
     });
 </script>
@@ -221,13 +229,20 @@ $(function () {
             series: [{
                 name: 'Radiant',
                 data: {{match.vsxp.0}},
-                color: '#43804B'
+                color: '#99CD32'
             },
             {
                 name: 'Dire',
                 data: {{match.vsxp.1}},
-                color: '#7F4933'
-            }]
+                color: '#FF3F0F'
+            }],
+            plotOptions: {
+		    line: {
+		        marker: {
+		            enabled: false
+		        	}
+		    	}
+			}
         });
     });
 </script>
@@ -254,6 +269,9 @@ $(function () {
 	                    text: 'Percent'
 	                }
 	            },
+	            credits: {
+                	enabled: false
+            	},
 	            tooltip: {
 	                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>',
 	                shared: true
@@ -261,11 +279,10 @@ $(function () {
 	            plotOptions: {
 	                area: {
 	                    stacking: 'percent',
-	                    lineColor: '#ffffff',
 	                    lineWidth: 1,
 	                    marker: {
+	                    	enabled : false,
 	                        lineWidth: 1,
-	                        lineColor: '#ffffff'
 	                    }
 	                }
 	            },
@@ -312,6 +329,9 @@ $(function () {
 	                    text: 'Percent'
 	                }
 	            },
+	            credits: {
+                	enabled: false
+            	},
 	            tooltip: {
 	                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>',
 	                shared: true
@@ -319,11 +339,10 @@ $(function () {
 	            plotOptions: {
 	                area: {
 	                    stacking: 'percent',
-	                    lineColor: '#ffffff',
 	                    lineWidth: 1,
 	                    marker: {
+	                    	enabled : false,
 	                        lineWidth: 1,
-	                        lineColor: '#ffffff'
 	                    }
 	                }
 	            },

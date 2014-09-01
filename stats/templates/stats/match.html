@@ -81,7 +81,7 @@
 			    	<ul id="list">
 				    	{% if player.avatar %}
 				    		<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{player.avatar}}" title="{{player.personaname}}"/></li>
-				    	{% else %}
+				    	{% elif player.personaname != 'Totals' %}
 				    		<li><img style="border:thin solid black;" alt="{{player.personaname}}" src="{{match.anon_img}}" title="{{player.personaname}}"/></li>
 				    	{% endif %}
 			          	<li>{{player.personaname}}</li>

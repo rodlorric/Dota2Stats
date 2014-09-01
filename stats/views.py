@@ -188,6 +188,7 @@ class MatchDetail(generic.ListView):
         match.game_mode = match_dict['game_mode_descripcion']
         match.duration = datetime.timedelta(seconds=match_dict['duration'])
         match.start_time_datetime = match_dict['start_time_DateTime']
+        match.radiant_win = match_dict['radiant_win']
         
         #match details
         i = 0

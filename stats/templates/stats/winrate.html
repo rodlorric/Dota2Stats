@@ -37,7 +37,14 @@ $(function () {
             series: [{
                 name: 'Winrate %',
                 data: {{playerdata.plot_data.1}}
-            }]
+            }],
+            plotOptions: {
+                line: {
+                    marker: {
+                        enabled: false
+                      }
+                  }
+              }     
         });
     });
 </script>

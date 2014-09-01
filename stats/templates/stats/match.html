@@ -1,12 +1,15 @@
 {% load staticfiles %}
+<!DOCTYPE HTML>
+<html>
 <title>Dota 2 Stats :: Match {{match.match_id}}</title>
+<link rel="shortcut icon" href="http://media.steampowered.com/apps/dota2/images/favicon.ico" />
 <link rel="stylesheet" type="text/css" href="{% static 'stats/style.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'stats/heroes_stylesheet.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'stats/abilities_stylesheet.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'stats/items_stylesheet.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'stats/countries_stylesheet.css' %}" />
-<script type="text/javascript" src="{% static 'stats/jquery-latest.js' %}"></script> 
-<script type="text/javascript" src="{% static 'stats/jquery.tablesorter.js' %}"></script> 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'stats/jquery.tablesorter.js' %}"></script>
 <script type="text/javascript">
 	$(document).ready(function() 
 	    { 
@@ -19,6 +22,7 @@
 
 {% if match.players_list %}
     <a href="http://dotabuff.com/matches/{{match.match_id}}">Match on Dotabuff</a>
+    <a href="http://dotamax.com/match/detail/{{match.match_id}}/">Match on Dotamax</a>
 	<table>
 		<tr>
           	<th>Date</th>
@@ -156,87 +160,198 @@
 		
 	<img src="{{match.gmap_img}}">
 	<p></p>
-	<!--Load the AJAX API-->
-	<script type="text/javascript" src="{% static 'stats/jsapi.js' %}"></script>
-	<script type="text/javascript">
-	    google.load('visualization', '1', {packages: ['corechart']});
-	</script>
-	<div id="allxp_visualization" style="width:1024; height:600px"></div>
-	<p></p>
-	<div id="radxp_visualization" style="width:1024; height:600px"></div>
-	<p></p>
-	<div id="direxp_visualization" style="width:1024; height:600px"></div>
-	<p></p>
-	<script type="text/javascript">
-		function drawVisualization() {
-	    // Create and populate the data table.
-	    var data_from_db = {{match.matchxp|safe}}
-	    var data = google.visualization.arrayToDataTable(data_from_db);
-	      	
-	    // Create and draw the visualization.
-	    new google.visualization.AreaChart(document.getElementById('allxp_visualization')).
-	    	draw(data, {colors: ['green'],
-	            		title: 'Match Experience Difference',
-	        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
-			}
-	        );
-	      }
+	<div id="xpcontainer" style="float:left; height: 400px; width: 1024px; margin: 0 auto"></div>
+	<div id="vscontainer" style="float:left; height: 400px; width: 1024px; margin: 0 auto"></div>
+	<div id="radiantcontainer" style="float:left; height: 400px; width: 1024px; margin: 0 auto"></div>
+	<div id="direcontainer" style="float:left; height: 400px; width: 1024px; margin: 0 auto"></div>
 
-	     google.setOnLoadCallback(drawVisualization);
-	</script>
 
-	<script type="text/javascript">
-		function drawVisualization() {
-	    // Create and populate the data table.
-	    var data_from_db = {{match.radxp|safe}}
-	    var data = google.visualization.arrayToDataTable(data_from_db);
-	      	
-	    // Create and draw the visualization.
-	    new google.visualization.AreaChart(document.getElementById('radxp_visualization')).
-	    	draw(data, {colors: ['#3D78F8', '#76FBC2', '#C501BA', '#EDEF1F', '#FC6B00'],
-	            		title: 'Total Radiant Experience',
-	        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
-	        			curveType: 'function',
-	        			isStacked: true,
-	        			series: {
-				            0: { lineWidth: 2 },
-				            1: { lineWidth: 2 },
-				            2: { lineWidth: 2 },
-				            3: { lineWidth: 2 },
-				            4: { lineWidth: 2 }
-	          },
-			}
-	        );
-	      }
 
-	     google.setOnLoadCallback(drawVisualization);
-	</script>
-	<script type="text/javascript">
-		function drawVisualization() {
-	    // Create and populate the data table.
-	    var data_from_db = {{match.direxp|safe}}
-	    var data = google.visualization.arrayToDataTable(data_from_db);
-	      	
-	    // Create and draw the visualization.
-	    new google.visualization.AreaChart(document.getElementById('direxp_visualization')).
-	    	draw(data, {colors: ['#FF89C6', '#A1B449', '#68DBF6', '#038722', '#A66B07'],
-	            		title: 'Total Dire Experience',
-	        			chartArea :{left:120,top:50,width:'70%',height:'50%'},
-	        			curveType: 'function',
-	        			isStacked: true,
-	        			series: {
-				            0: { lineWidth: 2 },
-				            1: { lineWidth: 2 },
-				            2: { lineWidth: 2 },
-				            3: { lineWidth: 2 },
-				            4: { lineWidth: 2 }
-	          },
-			}
-	        );
-	      }
+<!-- Difference-->
+<script type="text/javascript">
+$(function () {
+        $('#xpcontainer').highcharts({
+            chart: {
+                type: 'area'
+            },
+            title: {
+                text: 'Match Experience Difference'
+            },
+            yAxis: {
+                title: {
+                	text: 'Experience'
+                }
+            },
+            xAxis: {
+                categories: {{match.categoriesxp | safe }},
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Difference',
+                data: {{match.matchxp}},
+                color: '#43804B',
+            	negativeColor: '#7F4933'
+            }]
+        });
+    });
+</script>
+<!-- Radiant vs Dire -->
+<script type="text/javascript">
+$(function () {
+        $('#vscontainer').highcharts({
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Radiant Vs. Dire Total Experience'
+            },
+            yAxis: {
+                title: {
+                	text: 'Experience'
+                }
+            },
+            xAxis: {
+                categories: {{match.categoriesxp | safe }},
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Radiant',
+                data: {{match.vsxp.0}},
+                color: '#43804B'
+            },
+            {
+                name: 'Dire',
+                data: {{match.vsxp.1}},
+                color: '#7F4933'
+            }]
+        });
+    });
+</script>
 
-	     google.setOnLoadCallback(drawVisualization);
-	</script>
+<!--Radiant EXP -->
+<script type="text/javascript">
+	$(function () {
+	        $('#radiantcontainer').highcharts({
+	            chart: {
+	                type: 'area'
+	            },
+	            title: {
+	                text: 'Radiant Total Experience'
+	            },
+	            xAxis: {
+	                categories: {{match.categoriesxp | safe }},
+	                tickmarkPlacement: 'on',
+	                title: {
+	                    enabled: false
+	                }
+	            },
+	            yAxis: {
+	                title: {
+	                    text: 'Percent'
+	                }
+	            },
+	            tooltip: {
+	                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>',
+	                shared: true
+	            },
+	            plotOptions: {
+	                area: {
+	                    stacking: 'percent',
+	                    lineColor: '#ffffff',
+	                    lineWidth: 1,
+	                    marker: {
+	                        lineWidth: 1,
+	                        lineColor: '#ffffff'
+	                    }
+	                }
+	            },
+	            colors: ['#3D78F8', '#76FBC2', '#C501BA', '#EDEF1F', '#FC6B00'],
+	            series: [{
+	                name: '{{match.hero_list.0}}',
+	                data: {{match.playerxp.0}}
+	            }, {
+	                name: '{{match.hero_list.1}}',
+	                data: {{match.playerxp.1}}
+	            }, {
+	                name: '{{match.hero_list.2}}',
+	                data: {{match.playerxp.2}}
+	            }, {
+	                name: '{{match.hero_list.3}}',
+	                data: {{match.playerxp.3}}
+	            }, {
+	                name: '{{match.hero_list.4}}',
+	                data: {{match.playerxp.4}}
+	            }]
+	        });
+	    });
+</script>
+
+<!--Dire EXP -->
+<script type="text/javascript">
+	$(function () {
+	        $('#direcontainer').highcharts({
+	            chart: {
+	                type: 'area'
+	            },
+	            title: {
+	                text: 'Dire Total Experience'
+	            },
+	            xAxis: {
+	                categories: {{match.categoriesxp | safe }},
+	                tickmarkPlacement: 'on',
+	                title: {
+	                    enabled: false
+	                }
+	            },
+	            yAxis: {
+	                title: {
+	                    text: 'Percent'
+	                }
+	            },
+	            tooltip: {
+	                pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.percentage:.1f}%</b> ({point.y:,.0f})<br/>',
+	                shared: true
+	            },
+	            plotOptions: {
+	                area: {
+	                    stacking: 'percent',
+	                    lineColor: '#ffffff',
+	                    lineWidth: 1,
+	                    marker: {
+	                        lineWidth: 1,
+	                        lineColor: '#ffffff'
+	                    }
+	                }
+	            },
+	            colors: ['#FF89C6', '#A1B449', '#68DBF6', '#038722', '#A66B07'],
+	            series: [{
+	               name: '{{match.hero_list.5}}',
+	                data: {{match.playerxp.5}}
+	            }, {
+	                name: '{{match.hero_list.6}}',
+	                data: {{match.playerxp.6}}
+	            }, {
+	                name: '{{match.hero_list.7}}',
+	                data: {{match.playerxp.7}}
+	            }, {
+	                name: '{{match.hero_list.8}}',
+	                data: {{match.playerxp.8}}
+	            }, {
+	                name: '{{match.hero_list.9}}',
+	                data: {{match.playerxp.9}}
+	            }]
+	        });
+	    });
+</script>
+<script type="text/javascript" src="{% static 'stats/highcharts.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/exporting.js' %}"></script>
+
+
 {% else %}
 	<p>Match not found!</p>
 {% endif %}
+</html>

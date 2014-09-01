@@ -322,26 +322,26 @@ class MatchDetail(generic.ListView):
         if players:
             players.insert(5, radiant_totals)
             players.append(dire_totals)
-            radxp = hero_list[:5]
-            direxp = hero_list[5:]
-            radxp.insert(0, 'Time')
-            direxp.insert(0, 'Time')
-            radxp = [radxp]
-            direxp = [direxp]
-            matchxp = [['Time','XP Diff']]
+            playerxp = [[],[],[],[],[],[],[],[],[],[]]
+            categoriesxp = []
+            matchxp = []
+            vsxp = [[],[]]
 
             for time, rad0, rad1, rad2, rad3, rad4, dir128, dir129, dir130, dir131, dir132, xp in allplayersxp:
-                matchxp.append([str(datetime.timedelta(seconds=time)), xp])
-                radxp.append([str(datetime.timedelta(seconds=time)), rad0, rad1, rad2, rad3, rad4])
-                direxp.append([str(datetime.timedelta(seconds=time)), dir128, dir129, dir130, dir131, dir132])            
+                vsxp.append([vsxp[0].append(rad0 + rad1 + rad2 + rad3 + rad4), vsxp[1].append(dir128 + dir129 + dir130 + dir131 + dir132)])
+                matchxp.append(xp)
+                playerxp.append([playerxp[0].append(rad0), playerxp[1].append(rad1), playerxp[2].append(rad2), playerxp[3].append(rad3), playerxp[4].append(rad4), playerxp[5].append(dir128), playerxp[6].append(dir129), playerxp[7].append(dir130), playerxp[8].append(dir131), playerxp[9].append(dir132)])
+                categoriesxp.append(str(datetime.timedelta(seconds=time)))
 
             match.matchxp = matchxp
-            match.radxp = radxp
-            match.direxp = direxp
             match.players_list = players
             match.invalid_account_ids = settings.INVALID_ACCOUNT_IDS
             match.gmap_img = modules.gmap_img(coordinates)
             match.anon_img = settings.PLAYER_ANON_AVATAR
+            match.hero_list = hero_list
+            match.playerxp = playerxp
+            match.categoriesxp = categoriesxp
+            match.vsxp = vsxp
         return match
     
 class HeroesList(generic.ListView):
@@ -491,15 +491,18 @@ class WinrateView(generic.ListView):
         w_streak = streaks.pop(0)
         l_streak = streaks.pop(0)
         total_matches = 0
+        wr_data =[[],[]]
 
         #winrate[] = [0 match_id, 1 win_rate, 2 wins, 3 loses, 4 total_matches]
         if len(winrate) > 0:
-            wr_data = [[str(values[0]), float(values[1])] for values in winrate]
-            wr_data.insert(0,['Matches', 'Winrate (%)'])
+            #wr_data = wr_data[0].append(str(values[0])), wr_data[1].append(float(values[1])) for values in winrate]
+            for v in winrate:
+                wr_data.append([wr_data[0].append(str(v[0])), wr_data[1].append(float(v[1]))])
+            #wr_data.insert(0,['Matches', 'Winrate (%)'])
             total_matches = winrate[len(winrate)-1][4]
         else:
             total_matches = 0
-            wr_data.append([0 , 0])
+            wr_data.append([[0] , [0]])
             error = 'There are no matches with those players...'
 
         player_data = {'plot_data' : wr_data,

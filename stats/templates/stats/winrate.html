@@ -3,36 +3,46 @@
 <html>
 <head>
 	<link rel="shortcut icon" href="http://media.steampowered.com/apps/dota2/images/favicon.ico" />
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 	<link type="text/css" rel="stylesheet" href="{% static 'stats/style.css' %}" />
 	<title>Dota 2 Stats :: {% for player in playerdata.players %}
                             {% if player != None %}
                               {{player}} -
                             {% endif %}
                           {% endfor %} Winrate </title>
-    <!--Load the AJAX API-->
-    <script type="text/javascript" src="//www.google.com/jsapi"></script>
-    <script type="text/javascript">
-      google.load('visualization', '1', {packages: ['corechart']});
-    </script>
-    <script type="text/javascript">
-      function drawVisualization() {
-        // Create and populate the data table.
-        var data_from_db = {{playerdata.plot_data|safe}}
-        var data = google.visualization.arrayToDataTable(data_from_db);
-      	
-        // Create and draw the visualization.
-        new google.visualization.AreaChart(document.getElementById('winrate_visualization')).
-            draw(data, {colors: ['green'],
-            			curveType: 'function',
-            			width: 1400, height: 400,
-                        vAxis: {maxValue: 100,
-                        		minValue: 0},
-                        title: 'Winrate (%)'}
-                );
-      }     
-
-      google.setOnLoadCallback(drawVisualization);
-    </script>
+<!-- Winrate -->
+<script type="text/javascript">
+$(function () {
+        $('#wrcontainer').highcharts({
+            chart: {
+                type: 'line'
+            },
+            title: {
+                text: 'Winrate'
+            },
+            yAxis: {
+                title: {
+                  text: 'Experience'
+                }
+            },
+            xAxis: {
+                categories: {{playerdata.plot_data.0 | safe}},
+                labels: {
+                  enabled: false
+                },
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Winrate %',
+                data: {{playerdata.plot_data.1}}
+            }]
+        });
+    });
+</script>
+<script type="text/javascript" src="{% static 'stats/highcharts.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/exporting.js' %}"></script>
   </head>
 
   <body>
@@ -62,6 +72,6 @@
             combined win rate
         </p>
     <br><p>Total Matches: {{playerdata.total_matches}} Win Streak:  {{playerdata.win_streak}} - Lose Streak: {{playerdata.lose_streak}}</p>
-    <div id="winrate_visualization" style="width:1400px; height:400px"/>    
+    <div id="wrcontainer" style="float:left; height: 400px; width: 1024px; margin: 0 auto"></div>
   </body>
 </html>

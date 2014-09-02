@@ -157,7 +157,7 @@ def hero_detail(request, account_id, hero_id):
                 match.kills = matchxplayer.kills
                 match.deaths = matchxplayer.deaths
                 match.assists = matchxplayer.assists
-                match.duration = datetime.timedelta(seconds=match.duration)
+                match.duration = datetime.timedelta(seconds=match.duration if match.duration is not None else 0)
                 team = matchxplayer.player_slot      
                 if match.radiant_win and team < 128 or not match.radiant_win and team >= 128:
                     match.result = 'Won Match'

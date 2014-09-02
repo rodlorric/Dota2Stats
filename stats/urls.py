@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, url
 
-from stats import views
+from stats import views, matchesview
 
 urlpatterns = patterns('',
     url(r'^$', views.PlayersView.as_view(), name='players'),
@@ -10,7 +10,8 @@ urlpatterns = patterns('',
     url(r'^player/(?P<account_id>[\d,]+)/winrate/q/$', views.get_winrate_by_nummatches, name='get_winrate_by_nummatches'),
     url(r'^player/(?P<account_id>[\d,]+)/heroes/?$', views.HeroesxPlayer.as_view(), name='heroesxplayer'),
     url(r'^player/(?P<account_id>[\d,]+)/heroes/(?:(?P<hero_id>\d+)/)?$', views.hero_detail, name='herodetail'),
-    url(r'^match/(?P<match_id>\d+)/$', views.MatchDetail.as_view(), name='match'),
+    #url(r'^match/(?P<match_id>\d+)/$', views.MatchDetail.as_view(), name='match'),
+    url(r'^match/(?P<match_id>\d+)/$', matchesview.MatchDetail.as_view(), name='match'),
     url(r'^heroes/$', views.HeroesList.as_view(), name='heroes'),
     url(r'^countries/$', views.CountriesList.as_view(), name='countries'),
     url(r'^abilities/$', views.AbilitiesList.as_view(), name='abilities'),

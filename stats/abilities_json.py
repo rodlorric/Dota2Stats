@@ -2184,6 +2184,34 @@ JSON = {
         {
             "name": "phoenix_supernova",
             "id": "5630"
+        },
+        {
+            "name": "techies_land_mines",
+            "id": "5599"
+        },
+        {
+            "name": "techies_stasis_trap",
+            "id": "5600"
+        },
+        {
+            "name": "techies_suicide",
+            "id": "5601"
+        },
+        {
+            "name": "techies_remote_mines",
+            "id": "5602"
+        },        
+        {
+            "name": "techies_focused_detonate",
+            "id": "5644"
+        },
+        {
+            "name": "techies_remote_mines_self_detonate",
+            "id": "5636"
+        },
+        {
+            "name": "techies_minefield_sign",
+            "id": "5644"
         }
     ]
 }

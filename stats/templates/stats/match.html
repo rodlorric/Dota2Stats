@@ -10,10 +10,11 @@
 <link rel="stylesheet" type="text/css" href="{% static 'stats/countries_stylesheet.css' %}" />
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script type="text/javascript" src="{% static 'stats/jquery.tablesorter.js' %}"></script>
+<script type="text/javascript" src="{% static 'stats/jquery.tablesorter.staticrow.min.js' %}"></script>
 <script type="text/javascript">
 	$(document).ready(function() 
 	    { 
-	        $("#match").tablesorter(); 
+	        $("#match").tablesorter({ widgets: ['staticRow'] }); 
 	    } 
 	); 
 </script>
@@ -80,7 +81,11 @@
 	    </thead>
         <tbody>
 		{% for player in match.players_list %}
-		   	<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if players.account_id != None and player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
+			{% if player.personaname == 'Radiant Totals' or player.personaname == 'Dire Totals' %}
+				<tr class="static {{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}}">
+			{% else %}
+		   		<tr class={{player.radiant|yesno:"matchesxplayerrowradiant,matchesxplayerrowdire"}} onclick="location.href='{% if players.account_id != None and player.account_id|slugify not in invalid_account_ids %}{% url 'player:matchesxplayer' player.account_id %}{% endif %}'">
+		   	{% endif %}
 			    <td class="leftText">
 			    	<ul id="list">
 				    	{% if player.avatar %}

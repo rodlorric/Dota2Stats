@@ -59,7 +59,7 @@ class MatchDetail(generic.ListView):
                 radiant_totals.hero_healing += p.hero_healing
                 radiant_totals.tower_damage += p.tower_damage
                 radiant_totals.radiant = True
-                radiant_totals.personaname = 'Totals'
+                radiant_totals.personaname = 'Radiant Totals'
             else:
                 p.radiant = False
                 dire_totals.level += p.level
@@ -74,7 +74,7 @@ class MatchDetail(generic.ListView):
                 dire_totals.hero_healing += p.hero_healing
                 dire_totals.tower_damage += p.tower_damage
                 dire_totals.radiant = False
-                dire_totals.personaname = 'Totals'
+                dire_totals.personaname = 'Dire Totals'
 
             if 'hero_name' in player:                
                 h = Heroes(localized_name = player['localized_name'], name = player['hero_name'])                
@@ -156,7 +156,7 @@ class MatchDetail(generic.ListView):
             i += 1
 
         if players:
-            players.insert(5, radiant_totals)
+            players.append(radiant_totals)
             players.append(dire_totals)
             playerxp = [[],[],[],[],[],[],[],[],[],[]]
             categoriesxp = []

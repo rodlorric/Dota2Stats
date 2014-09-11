@@ -6,45 +6,23 @@ import datetime
 class MatchesxPlayer(generic.ListView):
     template_name = 'stats/matchesxplayer.html'
     context_object_name = 'match_list'
-    def get_queryset(self):
-        account_id = self.kwargs['account_id']
-        heroes = Heroes.objects.all()
-        playermatches = MatchPlayers.objects.filter(account_id = account_id).order_by('-match__match_id').select_related('match')
-        matches = []
-        for matchxplayer in playermatches:
-            try:
-                match = matchxplayer.match
-                if not match.game_mode in settings.VALID_GAME_MODES and match.human_players != 10:
-                    continue
-                try:
-                    hero = [h for h in heroes if h.hero_id == matchxplayer.hero_id][0]
-                    match.hero = hero.localized_name
-                    match.hero_img = 'sprite-' + hero.name[14:] + '_sb'
-                except Heroes.DoesNotExist:
-                    hero = None
-                
-                match.duration = datetime.timedelta(seconds=match.duration)
-                match.kills = matchxplayer.kills
-                match.deaths = matchxplayer.deaths
-                match.assists = matchxplayer.assists
-                team = matchxplayer.player_slot      
-                if match.radiant_win and team < 128 or not match.radiant_win and team >= 128:
-                    match.result = 'Won Match'
-                else:
-                    match.result = 'Lost Match'
-                matches.append(match)
-            except Matches.DoesNotExist:
-                continue     
-        return matches
     
-    def get_context_data(self, **kwargs):
-        context = super(MatchesxPlayer, self).get_context_data(**kwargs)
-        account_id = self.kwargs['account_id']
-        context['account_id'] = account_id
-        try:            
-            pi = Accounts.objects.get(account_id = account_id)
-            personaname = pi.personaname
-        except Accounts.DoesNotExist:
-            personaname = 'Anonymous'
-        context['personaname'] = personaname
-        return context
+    def get_queryset(self):
+        matches_list = []
+        persona = 'Anonymous'
+        matches = Matches.objects.get_matches_by_player(self.kwargs['account_id'])
+        for match_id, localized_name, is_radiant, win, duration, kills, deaths, assists, Name, personaname in matches:
+            match = Matches(match_id = match_id, radiant_win = win)
+            match.kills = kills
+            match.deaths = deaths
+            match.assists = assists
+            match.hero_img = 'sprite-' + Name[14:] + '_sb'
+            match.side = 'Radiant' if is_radiant == 1 else 'Dire'
+            match.duration = datetime.timedelta(seconds=duration) if duration is not None else '00:00:00'
+            persona = personaname
+            match.personaname = persona
+            match.result = 'Won Match' if win == 1 else 'Lost Match'
+            matches_list.append(match)
+        matches_list[0].personaname = persona
+        matches_list[0].account_id = self.kwargs['account_id']
+        return matches_list

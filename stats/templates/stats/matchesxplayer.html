@@ -11,10 +11,10 @@
 	    } 
 	); 
 </script>
-<h1>{{personaname}} Matches</h1>
+<h1>{{match_list.0.personaname}} Matches</h1>
 <a href="/stats/logout">Not you? Logout</a>
 <br>
-<a href="{% url 'player:winrate' account_id %}">Winrate</a>  <a href="{% url 'player:heroesxplayer' account_id %}">Heroes</a>
+<a href="{% url 'player:winrate' match_list.0.account_id %}">Winrate</a>  <a href="{% url 'player:heroesxplayer' match_list.0.account_id %}">Heroes</a>
 <br>
 {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
 <table id = "matches" class="tablesorter">
@@ -29,6 +29,9 @@
           	<th>
             	Result
           	</th>
+            <th>
+              Side
+            </th>
           	<th>
             	Duration
           	</th>
@@ -49,6 +52,7 @@
 	    <td class="centerText"> {{ match.match_id }} </td>
 	    <td class="centerText"> <i class="hero_sprite {{match.hero_img}}"></td>
 	    <td class="centerText"> {{match.result}} </td>
+      <td class="centerText"> {{match.side}} </td>
 	    <td class="centerText"> {{match.duration}} </td>
 	    <td class="centerText"> {{match.kills}}</td>
 	    <td class="centerText"> {{match.deaths}}</td>

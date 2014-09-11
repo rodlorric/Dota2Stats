@@ -100,6 +100,17 @@ class MatchesManager(models.Manager):
             cursor.close()
         return match_dict, players_dict, match_experience
 
+    def get_matches_by_player(self, account_id):
+        cursor = connection.cursor()
+        result_set = None
+        try:
+            cursor.callproc("GetMatchsByPlayer", [account_id])
+            result_set = cursor.fetchall()
+        finally:
+            cursor.close()
+        return result_set
+
+
 class Matches(models.Model):
     radiant_win = models.NullBooleanField()
     duration = models.IntegerField(blank=True, null=True)

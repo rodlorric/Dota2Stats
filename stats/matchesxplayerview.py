@@ -11,7 +11,7 @@ class MatchesxPlayer(generic.ListView):
         matches_list = []
         persona = 'Anonymous'
         matches = Matches.objects.get_matches_by_player(self.kwargs['account_id'])
-        for match_id, localized_name, is_radiant, win, duration, kills, deaths, assists, Name, personaname in matches:
+        for match_id, localized_name, is_radiant, win, duration, kills, deaths, assists, Name, personaname, start_time_DateTime in matches:
             match = Matches(match_id = match_id, radiant_win = win)
             match.kills = kills
             match.deaths = deaths
@@ -22,6 +22,7 @@ class MatchesxPlayer(generic.ListView):
             persona = personaname
             match.personaname = persona
             match.result = 'Won Match' if win == 1 else 'Lost Match'
+            match.start_time_DateTime = start_time_DateTime
             matches_list.append(match)
         matches_list[0].personaname = persona
         matches_list[0].account_id = self.kwargs['account_id']
